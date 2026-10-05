@@ -4,6 +4,7 @@ import * as echarts from 'echarts';
 
 import { GithubService } from '../../services/github-service';
 import { ContributionCalendar } from '../../models/github.contribution.model';
+import { USER_NAME } from '../../constants/user.constant';
 
 @Component({
   selector: 'app-contribution-heatmap',
@@ -27,23 +28,21 @@ export class ContributionHeatmap implements OnDestroy {
         return;
       }
 
-      const subscription = this.githubService
-        .getContributionsData('annkitabarman', year)
-        .subscribe({
-          next: (data) => {
-            this.calendar.set(data);
+      const subscription = this.githubService.getContributionsData(USER_NAME, year).subscribe({
+        next: (data) => {
+          this.calendar.set(data);
 
-            if (!this.chart) {
-              this.createChart();
-            } else {
-              this.updateChart();
-            }
-          },
+          if (!this.chart) {
+            this.createChart();
+          } else {
+            this.updateChart();
+          }
+        },
 
-          error: (error) => {
-            console.error('Failed to fetch contributions:', error);
-          },
-        });
+        error: (error) => {
+          console.error('Failed to fetch contributions:', error);
+        },
+      });
 
       onCleanup(() => {
         subscription.unsubscribe();

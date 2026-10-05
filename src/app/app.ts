@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Header } from './components/header/header';
 import { ProfileSidebar } from './components/profile-sidebar/profile-sidebar';
 import { GithubService, GithubUser } from './services/github-service';
+import { USER_NAME } from './constants/user.constant';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class App implements OnInit {
   user = signal<GithubUser | null>(null);
 
   ngOnInit(): void {
-    this.githubService.getUserDetails('annkitabarman').subscribe({
+    this.githubService.getUserDetails(USER_NAME).subscribe({
       next: (user) => {
         this.user.set(user);
       },
