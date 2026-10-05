@@ -1,21 +1,12 @@
-import { Component, Input } from '@angular/core';
-
-export interface Repository {
-  name: string;
-  visibility: string;
-  forkedFrom?: string;
-  description?: string;
-  language?: string;
-  languageColor?: string;
-}
+import { Component, input } from '@angular/core';
+import { Repository } from '../../services/github-service';
 
 @Component({
-  selector: 'app-repository-card',
+  selector: 'app-repo-card',
   standalone: true,
   templateUrl: './repo-card.html',
   styleUrl: './repo-card.css',
 })
 export class RepoCard {
-  @Input({ required: true })
-  repository!: Repository;
+  repository = input.required<Repository>();
 }

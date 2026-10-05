@@ -1,7 +1,9 @@
-import { Component, signal } from '@angular/core';
-import { RepoCard, Repository } from '../../components/repo-card/repo-card';
+import { Component, signal, inject, OnInit } from '@angular/core';
+import { RepoCard } from '../../components/repo-card/repo-card';
 import { ContributionHeatmap } from '../../components/contribution-heatmap/contribution-heatmap';
 import { ContributionActivity } from '../../components/contribution-activity/contribution-activity';
+import { Repository, GithubService } from '../../services/github-service';
+import { USER_NAME } from '../../constants/user.constant';
 
 @Component({
   selector: 'app-overview',
@@ -10,66 +12,32 @@ import { ContributionActivity } from '../../components/contribution-activity/con
   templateUrl: './overview-page.html',
   styleUrl: './overview-page.css',
 })
-export class OverviewPage {
+export class OverviewPage implements OnInit {
   availableYears = [2026, 2025, 2024, 2023, 2022];
   selectedYear = signal<number>(2026);
+  private readonly githubService = inject(GithubService);
 
   selectYear(year: number) {
     this.selectedYear.set(year);
   }
-  repositories: Repository[] = [
-    {
-      name: 'Complete-Python-3-Bootcamp',
-      visibility: 'Public',
-      forkedFrom: 'Pierian-Data/Complete-Python-3-Bootcamp',
-      description: 'Course Files for Complete Python 3 Bootcamp Course on Udemy',
-      language: 'Jupyter Notebook',
-      languageColor: '#DA5B0B',
-    },
 
-    {
-      name: 'flutter_login_ui',
-      visibility: 'Public',
-      forkedFrom: 'MarcusNg/flutter_login_ui',
-      description: 'https://youtu.be/6kaETbf444',
-      language: 'Dart',
-      languageColor: '#00B4AB',
-    },
+  repositories = signal<Repository[]>([]);
+  repositoriesLoading = signal(true);
 
-    {
-      name: 'gitignore',
-      visibility: 'Public',
-      forkedFrom: 'github/gitignore',
-      description: 'A collection of useful .gitignore templates',
-      language: undefined,
-    },
+  ngOnInit(): void {
+    this.loadPopularRepositories();
+  }
 
-    {
-      name: 'node-opcua-logger',
-      visibility: 'Public',
-      forkedFrom: 'coussej/node-opcua-logger',
-      description: 'An OPCUA Client for logging data to InfluxDB! 📡🎂',
-      language: 'JavaScript',
-      languageColor: '#F1E05A',
-    },
-
-    {
-      name: 'kafkajs',
-      visibility: 'Public',
-      forkedFrom: 'tulios/kafkajs',
-      description: 'A modern Apache Kafka client for node.js',
-      language: 'JavaScript',
-      languageColor: '#F1E05A',
-    },
-
-    {
-      name: 'node-opcua-1',
-      visibility: 'Public',
-      forkedFrom: 'node-opcua/node-opcua',
-      description:
-        'an implementation of a OPC UA stack fully written in javascript and nodejs - http://node-opcua.github.io/',
-      language: 'TypeScript',
-      languageColor: '#3178C6',
-    },
-  ];
+  private loadPopularRepositories() {
+    this.githubService.getPopularRepositories(USER_NAME).subscribe({
+      next: (response) => {
+        this.repositories.set(response.nodes);
+        this.repositoriesLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Failed to load popular repositories:', error);
+        this.repositoriesLoading.set(false);
+      },
+    });
+  }
 }

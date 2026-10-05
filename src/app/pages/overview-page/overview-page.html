@@ -8,8 +8,8 @@
   </div>
 
   <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-    @for (repository of repositories; track repository.name) {
-      <app-repository-card [repository]="repository" />
+    @for (repository of repositories(); track repository.name) {
+      <app-repo-card [repository]="repository" />
     }
   </div>
 

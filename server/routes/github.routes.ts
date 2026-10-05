@@ -4,10 +4,6 @@ const router = Router();
 
 const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
 
-/* =========================================================
-   CONTRIBUTION ACTIVITY
-========================================================= */
-
 const CONTRIBUTION_ACTIVITY_QUERY = `
   query ContributionActivity(
     $login: String!
@@ -156,10 +152,6 @@ router.get('/contribution-activity/:username/:year', async (req: Request, res: R
   }
 });
 
-/* =========================================================
-   CONTRIBUTION CALENDAR / HEATMAP
-========================================================= */
-
 router.get('/contributions/:username/:year', async (req: Request, res: Response) => {
   try {
     const { username, year: yearParam } = req.params;
@@ -241,6 +233,91 @@ router.get('/contributions/:username/:year', async (req: Request, res: Response)
 
     return res.status(500).json({
       message: 'Failed to fetch contributions',
+    });
+  }
+});
+
+const REPOSITORIES_QUERY = `
+  query PopularRepositories($login: String!, $first: Int!) {
+    user(login: $login) {
+      topRepositories(
+        first: $first
+        orderBy: {
+          field: STARGAZERS
+          direction: DESC
+        }
+      ) {
+        totalCount
+
+        nodes {
+          id
+          name
+          nameWithOwner
+          description
+          url
+          isPrivate
+          isFork
+          stargazerCount
+          forkCount
+          primaryLanguage {
+            name
+            color
+          }
+          parent {
+            nameWithOwner
+            url
+          }
+        }
+      }
+    }
+  }
+`;
+router.get('/repositories/:username', async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({
+        message: 'Username is required',
+      });
+    }
+
+    const response = await fetch(GITHUB_GRAPHQL_URL, {
+      method: 'POST',
+
+      headers: {
+        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/vnd.github+json',
+      },
+
+      body: JSON.stringify({
+        query: REPOSITORIES_QUERY,
+        variables: {
+          login: username,
+          first: 6,
+        },
+      }),
+    });
+
+    const result = await response.json();
+    console.log(result);
+
+    if (!response.ok || result.errors) {
+      console.error('GitHub GraphQL error:', result.errors);
+
+      return res.status(500).json({
+        message: 'Failed to fetch popular repositories',
+        errors: result.errors,
+      });
+    }
+
+    return res.json(result.data?.user?.topRepositories);
+  } catch (error) {
+    console.error('Popular repositories error:', error);
+
+    return res.status(500).json({
+      message: 'Failed to fetch popular repositories',
     });
   }
 });

@@ -19,6 +19,31 @@ export interface GithubUser {
   public_repos: number;
 }
 
+export interface Repository {
+  id: string;
+  name: string;
+  nameWithOwner: string;
+  description: string | null;
+  url: string;
+  isPrivate: boolean;
+  isFork: boolean;
+  stargazerCount: number;
+  forkCount: number;
+  primaryLanguage: {
+    name: string;
+    color: string;
+  } | null;
+  parent: {
+    nameWithOwner: string;
+    url: string;
+  } | null;
+}
+
+export interface PopularRepositoriesResponse {
+  totalCount: number;
+  nodes: Repository[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -54,6 +79,12 @@ export class GithubService {
   getContributionActivity(username: string, year: number) {
     return this.http.get<ContributionActivityResponse>(
       `${this.backendUrl}/github/contribution-activity/${username}/${year}`,
+    );
+  }
+
+  getPopularRepositories(username: string) {
+    return this.http.get<PopularRepositoriesResponse>(
+      `${this.backendUrl}/github/repositories/${username}`,
     );
   }
 }

@@ -17,7 +17,7 @@ export class ContributionHeatmap implements OnDestroy {
   chartElement = viewChild<ElementRef<HTMLDivElement>>('chart');
   calendar = signal<ContributionCalendar | null>(null);
 
-  private chart: echarts.ECharts | null = null;
+  private chart = signal<echarts.ECharts | null>(null);
 
   constructor(private githubService: GithubService) {
     effect((onCleanup) => {
@@ -32,7 +32,7 @@ export class ContributionHeatmap implements OnDestroy {
         next: (data) => {
           this.calendar.set(data);
 
-          if (!this.chart) {
+          if (!this.chart()) {
             this.createChart();
           } else {
             this.updateChart();
@@ -89,9 +89,9 @@ export class ContributionHeatmap implements OnDestroy {
       return;
     }
 
-    this.chart = echarts.init(chartElement.nativeElement);
+    this.chart.set(echarts.init(chartElement.nativeElement));
 
-    this.chart.setOption({
+    this.chart()?.setOption({
       tooltip: {
         formatter: (params: any) => {
           const value = params.value;
@@ -190,11 +190,11 @@ export class ContributionHeatmap implements OnDestroy {
   }
 
   private updateChart(): void {
-    if (!this.chart) {
+    if (!this.chart()) {
       return;
     }
 
-    this.chart.setOption({
+    this.chart()?.setOption({
       calendar: {
         range: this.getDateRange(),
       },
@@ -208,13 +208,13 @@ export class ContributionHeatmap implements OnDestroy {
   }
 
   private handleResize = (): void => {
-    this.chart?.resize();
+    this.chart()?.resize();
   };
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.handleResize);
 
-    this.chart?.dispose();
-    this.chart = null;
+    this.chart()?.dispose();
+    this.chart.set(null);
   }
 }
