@@ -31,7 +31,6 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
 
   // Years available in the dropdown
   availableYears = [2026, 2025, 2024, 2023];
-
   contributionData = computed<[string, number][]>(() => {
     const calendar = this.calendar();
 
@@ -39,9 +38,13 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
       return [];
     }
 
-    return calendar.weeks.flatMap((week) =>
-      week.contributionDays.map((day): [string, number] => [day.date, day.contributionCount]),
-    );
+    const today = new Date().toISOString().split('T')[0];
+
+    return calendar.weeks
+      .flatMap((week) =>
+        week.contributionDays.map((day): [string, number] => [day.date, day.contributionCount]),
+      )
+      .filter(([date]) => date <= today);
   });
 
   maxContributions = computed(() => {
@@ -83,7 +86,15 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
 
     const days = calendar.weeks.flatMap((week) => week.contributionDays);
 
-    return [days[0].date, days[days.length - 1].date];
+    const startDate = days[0].date;
+
+    const today = new Date().toISOString().split('T')[0];
+
+    // Don't allow the calendar to extend beyond today
+    const endDate =
+      this.selectedYear() === new Date().getFullYear() ? today : days[days.length - 1].date;
+
+    return [startDate, endDate];
   }
 
   private createChart(): void {
