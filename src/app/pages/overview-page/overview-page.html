@@ -1,5 +1,8 @@
 <div class="w-full">
-  <!-- Popular repositories -->
+  <!-- ========================= -->
+  <!-- Popular repositories      -->
+  <!-- ========================= -->
+
   <div class="mb-3 flex items-center justify-between">
     <h2 class="text-base font-semibold text-[#1f2328]">Popular repositories</h2>
 
@@ -14,31 +17,73 @@
     }
   </div>
 
-  <!-- Contribution section + year menu -->
-  <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_160px]">
-    <!-- Heatmap -->
-    <div class="min-w-0">
-      <app-contribution-heatmap [selectedYear]="selectedYear()" />
+  <!-- ========================= -->
+  <!-- Contributions              -->
+  <!-- ========================= -->
+
+  <div class="mt-8">
+    <!-- ================================= -->
+    <!-- Heatmap + desktop year navigation -->
+    <!-- ================================= -->
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_160px]">
+      <!-- Heatmap -->
+      <div class="min-w-0">
+        <app-contribution-heatmap [selectedYear]="selectedYear()" />
+      </div>
+
+      <!-- ============================== -->
+      <!-- Desktop sticky year navigation -->
+      <!-- ============================== -->
+
+      <aside class="hidden lg:block">
+        <div class="sticky top-6">
+          @for (year of availableYears; track year) {
+            <button
+              type="button"
+              (click)="selectYear(year)"
+              class="mb-2 block w-full rounded-md px-4 py-3 text-left text-sm transition"
+              [class.bg-[#0969da]]="selectedYear() === year"
+              [class.text-white]="selectedYear() === year"
+              [class.font-semibold]="selectedYear() === year"
+              [class.text-[#1f2328]]="selectedYear() !== year"
+              [class.hover:bg-[#f6f8fa]]="selectedYear() !== year"
+            >
+              {{ year }}
+            </button>
+          }
+        </div>
+      </aside>
     </div>
 
-    <!-- Sticky year menu -->
-    <aside class="hidden lg:block">
-      <div class="sticky top-6">
-        @for (year of availableYears; track year) {
-          <button
-            type="button"
-            (click)="selectYear(year)"
-            class="mb-2 block w-full rounded-md px-4 py-3 text-left text-sm transition"
-            [class.bg-[#0969da]]="selectedYear() === year"
-            [class.text-white]="selectedYear() === year"
-            [class.font-semibold]="selectedYear() === year"
-            [class.text-[#1f2328]]="selectedYear() !== year"
-            [class.hover:bg-[#f6f8fa]]="selectedYear() !== year"
-          >
-            {{ year }}
-          </button>
-        }
+    <!-- ================================= -->
+    <!-- Contribution activity             -->
+    <!-- ================================= -->
+
+    <div class="mt-8">
+      <!-- Mobile/tablet header -->
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-[#1f2328]">Contribution activity</h2>
+
+        <!--
+          Only show dropdown below lg.
+          On desktop the sticky sidebar is used instead.
+        -->
+        <select
+          class="rounded-md border border-[#30363d] bg-[#21262d] px-3 py-2 text-sm text-white lg:hidden"
+          [value]="selectedYear()"
+          (change)="selectYear(+$any($event.target).value)"
+        >
+          @for (year of availableYears; track year) {
+            <option [value]="year">Year: {{ year }}</option>
+          }
+        </select>
       </div>
-    </aside>
+
+      <!-- Your contribution activity content goes here -->
+      <div>
+        <!-- activity component/content -->
+      </div>
+    </div>
   </div>
 </div>

@@ -2,13 +2,11 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Input,
+  OnChanges,
   OnDestroy,
+  SimpleChanges,
   ViewChild,
-  computed,
-  signal,
-  input,
-  inject,
-  effect,
 } from '@angular/core';
 
 import * as echarts from 'echarts';
@@ -22,58 +20,45 @@ import { ContributionCalendar } from '../../models/github.contribution.model';
   templateUrl: './contribution-heatmap.html',
   styleUrl: './contribution-heatmap.css',
 })
-export class ContributionHeatmap implements AfterViewInit, OnDestroy {
+export class ContributionHeatmap implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('chart')
   chartElement!: ElementRef<HTMLDivElement>;
-  private readonly githubService = inject(GithubService);
+
+  @Input()
+  selectedYear!: number;
+
   private chart: echarts.ECharts | null = null;
 
-  calendar = signal<ContributionCalendar | null>(null);
+  calendar: ContributionCalendar | null = null;
 
-  selectedYear = input<number>(2026);
+  constructor(private githubService: GithubService) {}
 
-  // Years available in the dropdown
-  availableYears = input<number[]>([]);
-  contributionData = computed<[string, number][]>(() => {
-    const calendar = this.calendar();
-
-    if (!calendar) {
-      return [];
-    }
-
-    const today = new Date().toISOString().split('T')[0];
-
-    return calendar.weeks
-      .flatMap((week) =>
-        week.contributionDays.map((day): [string, number] => [day.date, day.contributionCount]),
-      )
-      .filter(([date]) => date <= today);
-  });
-
-  maxContributions = computed(() => {
-    const values = this.contributionData().map((item) => item[1]);
-
-    return Math.max(...values, 1);
-  });
-
-  constructor() {
-    effect(() => {
-      const year = this.selectedYear();
-
-      if (this.chart) {
-        this.fetchContributions();
-      }
-    });
-  }
+  // ============================================
+  // Initial chart setup
+  // ============================================
 
   ngAfterViewInit(): void {
     this.fetchContributions();
   }
 
+  // ============================================
+  // React to year changes from parent
+  // ============================================
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedYear'] && !changes['selectedYear'].firstChange) {
+      this.fetchContributions();
+    }
+  }
+
+  // ============================================
+  // Fetch GitHub contribution data
+  // ============================================
+
   private fetchContributions(): void {
-    this.githubService.getContributionsData('annkitabarman', this.selectedYear()).subscribe({
+    this.githubService.getContributionsData('annkitabarman', this.selectedYear).subscribe({
       next: (data) => {
-        this.calendar.set(data);
+        this.calendar = data;
 
         if (this.chart) {
           this.updateChart();
@@ -87,30 +72,59 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
       },
     });
   }
-  private getDateRange(): [string, string] {
-    const calendar = this.calendar();
 
-    if (!calendar || !calendar.weeks.length) {
+  // ============================================
+  // Flatten contribution data
+  // ============================================
+
+  private getContributionData(): [string, number][] {
+    if (!this.calendar) {
+      return [];
+    }
+
+    return this.calendar.weeks.flatMap((week) =>
+      week.contributionDays.map((day): [string, number] => [day.date, day.contributionCount]),
+    );
+  }
+
+  // ============================================
+  // Maximum contribution count
+  // ============================================
+
+  private getMaxContributions(): number {
+    const values = this.getContributionData().map((item) => item[1]);
+
+    return Math.max(...values, 1);
+  }
+
+  // ============================================
+  // Date range
+  // ============================================
+
+  private getDateRange(): [string, string] {
+    if (!this.calendar || !this.calendar.weeks.length) {
       return ['', ''];
     }
 
-    const days = calendar.weeks.flatMap((week) => week.contributionDays);
+    const days = this.calendar.weeks.flatMap((week) => week.contributionDays);
 
     const startDate = days[0].date;
 
     const today = new Date().toISOString().split('T')[0];
 
-    // Don't allow the calendar to extend beyond today
-    const endDate =
-      this.selectedYear() === new Date().getFullYear() ? today : days[days.length - 1].date;
+    const currentYear = new Date().getFullYear();
+
+    const endDate = this.selectedYear === currentYear ? today : days[days.length - 1].date;
 
     return [startDate, endDate];
   }
 
-  private createChart(): void {
-    const calendar = this.calendar();
+  // ============================================
+  // Create ECharts instance
+  // ============================================
 
-    if (!calendar || !this.chartElement) {
+  private createChart(): void {
+    if (!this.calendar || !this.chartElement) {
       return;
     }
 
@@ -119,47 +133,82 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
     this.chart.setOption({
       tooltip: {
         formatter: (params: any) => {
-          return `${params.value[0]}: ${params.value[1]} contributions`;
+          const value = params.value;
+
+          return `
+          <div style="font-size: 12px;">
+            <strong>${value[0]}</strong><br/>
+            ${value[1]} contributions
+          </div>
+        `;
         },
       },
 
+      // Discrete GitHub-style contribution levels
       visualMap: {
-        min: 0,
-        max: this.maxContributions(),
-        calculable: false,
-        orient: 'horizontal',
-        left: 'center',
-        bottom: 0,
+        type: 'piecewise',
         show: false,
 
-        inRange: {
-          color: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
-        },
+        pieces: [
+          {
+            value: 0,
+            color: '#f0fdf4',
+          },
+          {
+            value: 1,
+            color: '#bbf7d0',
+          },
+          {
+            min: 2,
+            max: 3,
+            color: '#4ade80',
+          },
+          {
+            min: 4,
+            max: 6,
+            color: '#16a34a',
+          },
+          {
+            min: 7,
+            color: '#166534',
+          },
+        ],
       },
 
       calendar: {
         range: this.getDateRange(),
-        cellSize: ['auto', 12],
-        top: 20,
-        left: 40,
+
+        // Actual calendar cell size
+        cellSize: [12, 12],
+
+        top: 35,
+        left: 45,
         right: 20,
-        bottom: 10,
-        splitLine: {
-          show: false,
-        },
-        itemStyle: {
-          borderWidth: 2,
-          borderColor: '#fff',
-        },
+        bottom: 20,
+
         yearLabel: {
           show: false,
         },
+
         monthLabel: {
           nameMap: 'en',
+          color: '#57606a',
+          fontSize: 12,
         },
+
         dayLabel: {
           firstDay: 1,
           nameMap: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          color: '#57606a',
+          fontSize: 12,
+        },
+
+        itemStyle: {
+          borderRadius: 3,
+        },
+
+        splitLine: {
+          show: false,
         },
       },
 
@@ -168,13 +217,22 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
           type: 'heatmap',
           coordinateSystem: 'calendar',
           calendarIndex: 0,
-          data: this.contributionData(),
+
+          itemStyle: {
+            borderRadius: 3,
+          },
+
+          data: this.getContributionData(),
         },
       ],
     });
 
     window.addEventListener('resize', this.handleResize);
   }
+
+  // ============================================
+  // Update existing chart
+  // ============================================
 
   private updateChart(): void {
     if (!this.chart) {
@@ -183,8 +241,33 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
 
     this.chart.setOption({
       visualMap: {
-        min: 0,
-        max: this.maxContributions(),
+        type: 'piecewise',
+        show: false,
+
+        pieces: [
+          {
+            value: 0,
+            color: '#f0fdf4',
+          },
+          {
+            value: 1,
+            color: '#bbf7d0',
+          },
+          {
+            min: 2,
+            max: 3,
+            color: '#4ade80',
+          },
+          {
+            min: 4,
+            max: 6,
+            color: '#16a34a',
+          },
+          {
+            min: 7,
+            color: '#166534',
+          },
+        ],
       },
 
       calendar: {
@@ -193,19 +276,29 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
 
       series: [
         {
-          data: this.contributionData(),
+          data: this.getContributionData(),
         },
       ],
     });
   }
 
+  // ============================================
+  // Resize
+  // ============================================
+
   private handleResize = (): void => {
     this.chart?.resize();
   };
+
+  // ============================================
+  // Cleanup
+  // ============================================
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.handleResize);
 
     this.chart?.dispose();
+
+    this.chart = null;
   }
 }

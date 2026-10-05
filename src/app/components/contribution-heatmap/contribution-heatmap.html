@@ -1,25 +1,23 @@
-<div class="mb-4 flex items-center justify-between">
-  <h2 class="text-sm font-semibold text-[#1f2328]">
-    {{ calendar()?.totalContributions }} Contributions in {{ selectedYear() }}
-  </h2>
+@if (calendar) {
+  <div class="mb-4">
+    <span class="text-md text-[#57606a]">
+      {{ calendar.totalContributions }} contributions in {{ selectedYear }}
+    </span>
+  </div>
+}
+
+<div class="w-full overflow-x-auto">
+  <div #chart class="h-[180px] min-h-[180px] min-w-[800px]"></div>
 </div>
 
-<!-- ECharts container -->
-<div #chart class="h-[220px] min-h-[220px] w-full"></div>
-
-<!-- Legend -->
 <div class="mt-2 flex items-center justify-end gap-1 text-xs text-[#57606a]">
   <span>Less</span>
 
-  <span class="h-3 w-3 rounded-sm border border-white bg-[#ebedf0]"></span>
-
-  <span class="h-3 w-3 rounded-sm border border-white bg-[#9be9a8]"></span>
-
-  <span class="h-3 w-3 rounded-sm border border-white bg-[#40c463]"></span>
-
-  <span class="h-3 w-3 rounded-sm border border-white bg-[#30a14e]"></span>
-
-  <span class="h-3 w-3 rounded-sm border border-white bg-[#216e39]"></span>
+  <span class="h-3 w-3 rounded-sm bg-[#f0fdf4]"></span>
+  <span class="h-3 w-3 rounded-sm bg-[#bbf7d0]"></span>
+  <span class="h-3 w-3 rounded-sm bg-[#4ade80]"></span>
+  <span class="h-3 w-3 rounded-sm bg-[#16a34a]"></span>
+  <span class="h-3 w-3 rounded-sm bg-[#166534]"></span>
 
   <span>More</span>
 </div>
