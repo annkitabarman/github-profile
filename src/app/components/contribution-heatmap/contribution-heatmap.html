@@ -1,23 +1,7 @@
 <div class="mb-4 flex items-center justify-between">
-  <h2 class="text-sm font-semibold text-[#1f2328]">Contributions</h2>
-
-  <div class="flex items-center gap-3">
-    @if (calendar(); as data) {
-      <span class="text-sm text-[#57606a]"> {{ data.totalContributions }} contributions </span>
-    }
-
-    <select
-      class="rounded-md border border-[#d0d7de] bg-white px-2 py-1 text-sm text-[#1f2328]"
-      [value]="selectedYear()"
-      (change)="selectYear(+$any($event.target).value)"
-    >
-      @for (year of availableYears; track year) {
-        <option [value]="year">
-          {{ year }}
-        </option>
-      }
-    </select>
-  </div>
+  <h2 class="text-sm font-semibold text-[#1f2328]">
+    {{ calendar()?.totalContributions }} Contributions in {{ selectedYear() }}
+  </h2>
 </div>
 
 <!-- ECharts container -->

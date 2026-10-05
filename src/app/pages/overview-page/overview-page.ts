@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RepoCard, Repository } from '../../components/repo-card/repo-card';
 import { ContributionHeatmap } from '../../components/contribution-heatmap/contribution-heatmap';
 
@@ -10,6 +10,12 @@ import { ContributionHeatmap } from '../../components/contribution-heatmap/contr
   styleUrl: './overview-page.css',
 })
 export class OverviewPage {
+  availableYears = [2026, 2025, 2024, 2023, 2022];
+  selectedYear = signal<number>(2026);
+
+  selectYear(year: number) {
+    this.selectedYear.set(year);
+  }
   repositories: Repository[] = [
     {
       name: 'Complete-Python-3-Bootcamp',

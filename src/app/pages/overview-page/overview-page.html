@@ -1,5 +1,5 @@
 <div class="w-full">
-  <!-- Section header -->
+  <!-- Popular repositories -->
   <div class="mb-3 flex items-center justify-between">
     <h2 class="text-base font-semibold text-[#1f2328]">Popular repositories</h2>
 
@@ -8,11 +8,37 @@
     </a>
   </div>
 
-  <!-- Repository grid -->
   <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
     @for (repository of repositories; track repository.name) {
       <app-repository-card [repository]="repository" />
     }
   </div>
-  <app-contribution-heatmap />
+
+  <!-- Contribution section + year menu -->
+  <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_160px]">
+    <!-- Heatmap -->
+    <div class="min-w-0">
+      <app-contribution-heatmap [selectedYear]="selectedYear()" />
+    </div>
+
+    <!-- Sticky year menu -->
+    <aside class="hidden lg:block">
+      <div class="sticky top-6">
+        @for (year of availableYears; track year) {
+          <button
+            type="button"
+            (click)="selectYear(year)"
+            class="mb-2 block w-full rounded-md px-4 py-3 text-left text-sm transition"
+            [class.bg-[#0969da]]="selectedYear() === year"
+            [class.text-white]="selectedYear() === year"
+            [class.font-semibold]="selectedYear() === year"
+            [class.text-[#1f2328]]="selectedYear() !== year"
+            [class.hover:bg-[#f6f8fa]]="selectedYear() !== year"
+          >
+            {{ year }}
+          </button>
+        }
+      </div>
+    </aside>
+  </div>
 </div>

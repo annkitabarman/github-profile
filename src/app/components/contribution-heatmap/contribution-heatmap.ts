@@ -6,6 +6,9 @@ import {
   ViewChild,
   computed,
   signal,
+  input,
+  inject,
+  effect,
 } from '@angular/core';
 
 import * as echarts from 'echarts';
@@ -22,15 +25,15 @@ import { ContributionCalendar } from '../../models/github.contribution.model';
 export class ContributionHeatmap implements AfterViewInit, OnDestroy {
   @ViewChild('chart')
   chartElement!: ElementRef<HTMLDivElement>;
-
+  private readonly githubService = inject(GithubService);
   private chart: echarts.ECharts | null = null;
 
   calendar = signal<ContributionCalendar | null>(null);
 
-  selectedYear = signal<number>(2026);
+  selectedYear = input<number>(2026);
 
   // Years available in the dropdown
-  availableYears = [2026, 2025, 2024, 2023];
+  availableYears = input<number[]>([]);
   contributionData = computed<[string, number][]>(() => {
     const calendar = this.calendar();
 
@@ -53,7 +56,15 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
     return Math.max(...values, 1);
   });
 
-  constructor(private githubService: GithubService) {}
+  constructor() {
+    effect(() => {
+      const year = this.selectedYear();
+
+      if (this.chart) {
+        this.fetchContributions();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     this.fetchContributions();
@@ -76,7 +87,6 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
       },
     });
   }
-
   private getDateRange(): [string, string] {
     const calendar = this.calendar();
 
@@ -187,17 +197,6 @@ export class ContributionHeatmap implements AfterViewInit, OnDestroy {
         },
       ],
     });
-  }
-
-  selectYear(year: number): void {
-    if (year === this.selectedYear()) {
-      return;
-    }
-
-    this.selectedYear.set(year);
-
-    // Fetch the selected year's data from GitHub
-    this.fetchContributions();
   }
 
   private handleResize = (): void => {
