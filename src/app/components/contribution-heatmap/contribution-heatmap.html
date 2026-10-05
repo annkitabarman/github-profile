@@ -1,0 +1,41 @@
+<div class="mb-4 flex items-center justify-between">
+  <h2 class="text-sm font-semibold text-[#1f2328]">Contributions</h2>
+
+  <div class="flex items-center gap-3">
+    @if (calendar(); as data) {
+      <span class="text-sm text-[#57606a]"> {{ data.totalContributions }} contributions </span>
+    }
+
+    <select
+      class="rounded-md border border-[#d0d7de] bg-white px-2 py-1 text-sm text-[#1f2328]"
+      [value]="selectedYear()"
+      (change)="selectYear(+$any($event.target).value)"
+    >
+      @for (year of availableYears; track year) {
+        <option [value]="year">
+          {{ year }}
+        </option>
+      }
+    </select>
+  </div>
+</div>
+
+<!-- ECharts container -->
+<div #chart class="h-[220px] min-h-[220px] w-full"></div>
+
+<!-- Legend -->
+<div class="mt-2 flex items-center justify-end gap-1 text-xs text-[#57606a]">
+  <span>Less</span>
+
+  <span class="h-3 w-3 rounded-sm border border-white bg-[#ebedf0]"></span>
+
+  <span class="h-3 w-3 rounded-sm border border-white bg-[#9be9a8]"></span>
+
+  <span class="h-3 w-3 rounded-sm border border-white bg-[#40c463]"></span>
+
+  <span class="h-3 w-3 rounded-sm border border-white bg-[#30a14e]"></span>
+
+  <span class="h-3 w-3 rounded-sm border border-white bg-[#216e39]"></span>
+
+  <span>More</span>
+</div>

@@ -19,7 +19,6 @@ export class App implements OnInit {
     this.githubService.getUserDetails('annkitabarman').subscribe({
       next: (user) => {
         this.user.set(user);
-        console.log(user);
       },
 
       error: (err) => {

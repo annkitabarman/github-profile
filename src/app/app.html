@@ -1,4 +1,8 @@
-<app-header [repoCount]="user()?.public_repos ?? 0" />
+<app-header
+  [repoCount]="user()?.public_repos ?? 0"
+  [avatar_url]="user()?.avatar_url ?? null"
+  [username]="user()?.login ?? ''"
+/>
 
 <main class="flex flex-col gap-8 px-8 md:flex-row md:px-10 py-8">
   <!-- Profile -->

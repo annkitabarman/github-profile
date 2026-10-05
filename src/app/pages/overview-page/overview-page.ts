@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RepoCard, Repository } from '../../components/repo-card/repo-card';
+import { ContributionHeatmap } from '../../components/contribution-heatmap/contribution-heatmap';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [RepoCard],
+  imports: [RepoCard, ContributionHeatmap],
   templateUrl: './overview-page.html',
   styleUrl: './overview-page.css',
 })

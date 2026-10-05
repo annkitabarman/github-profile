@@ -28,6 +28,8 @@ export class Header {
 
   showMore = false;
   repoCount = input<number | null>(null);
+  username = input<string>('');
+  avatar_url = input<string | null>(null);
 
   toggleMore(): void {
     this.showMore = !this.showMore;

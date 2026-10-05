@@ -4,49 +4,61 @@
     <!-- Hamburger -->
     <button
       type="button"
-      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] hover:text-[#1f2328] sm:h-12 sm:w-12"
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] hover:text-[#1f2328] sm:h-10 sm:w-10"
     >
-      <lucide-icon [img]="Menu" [size]="20"></lucide-icon>
+      <lucide-icon
+        [img]="Menu"
+        [size]="16"
+        class="sm:[&_svg]:h-[18px] sm:[&_svg]:w-[18px]"
+      ></lucide-icon>
     </button>
 
     <!-- GitHub Logo -->
-    <img src="/github-logo.svg" alt="GitHub" class="ml-3 h-8 w-8 invert sm:ml-5 sm:h-10 sm:w-10" />
+    <img src="/github-logo.svg" alt="GitHub" class="ml-3 h-5 w-5 invert sm:ml-5 sm:h-7 sm:w-7" />
 
     <!-- Username -->
-    <span class="ml-3 truncate text-base font-semibold sm:ml-5 sm:text-xl"> annkitabarman </span>
+    <span class="ml-3 truncate text-sm font-semibold sm:ml-5 sm:text-lg"> {{ username() }} </span>
 
     <!-- Spacer -->
     <div class="flex-1"></div>
 
-    <!-- Desktop Search             -->
+    <!-- Desktop Search -->
     <div
       class="hidden h-9 w-64 items-center rounded-lg border border-[#d0d7de] bg-white px-4 text-[#57606a] lg:flex"
     >
-      <lucide-icon [img]="Search" [size]="20"></lucide-icon>
+      <lucide-icon [img]="Search" [size]="18"></lucide-icon>
 
-      <span class="ml-3 text-[16px]"> Type </span>
+      <span class="ml-3 text-[15px]">Type</span>
 
       <kbd class="ml-2 rounded border border-[#d0d7de] px-1.5 py-0.5 text-xs text-[#57606a]">
         /
       </kbd>
 
-      <span class="ml-2 text-[16px]"> to search </span>
+      <span class="ml-2 text-[15px]">to search</span>
     </div>
 
-    <!-- Mobile / Tablet Search     -->
+    <!-- Mobile / Tablet Search -->
     <button
       type="button"
-      class="flex h-10 w-10 items-center justify-center text-[#57606a] hover:text-[#1f2328] lg:hidden"
+      class="flex h-8 w-8 items-center justify-center text-[#57606a] hover:text-[#1f2328] sm:h-9 sm:w-9 lg:hidden"
     >
-      <lucide-icon [img]="Search" [size]="22"></lucide-icon>
+      <lucide-icon [img]="Search" [size]="18"></lucide-icon>
     </button>
 
     <!-- Profile -->
-    <img
-      src="https://github.com/identicons/placeholder.png"
-      alt="Profile"
-      class="ml-2 h-8 w-8 shrink-0 rounded-full object-cover sm:ml-5 sm:h-10 sm:w-10"
-    />
+    @if (avatar_url()) {
+      <img
+        [src]="avatar_url()"
+        alt="Profile"
+        class="ml-2 h-6 w-6 shrink-0 rounded-full object-cover sm:ml-4 sm:h-8 sm:w-8"
+      />
+    } @else {
+      <img
+        src="https://github.com/identicons/placeholder.png"
+        alt="Profile"
+        class="ml-2 h-6 w-6 shrink-0 rounded-full object-cover sm:ml-4 sm:h-8 sm:w-8"
+      />
+    }
   </div>
 
   <!-- Profile Navigation          -->
