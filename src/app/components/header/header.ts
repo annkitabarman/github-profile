@@ -1,4 +1,4 @@
-import { Component, input, signal, inject } from '@angular/core';
+import { Component, input, computed, inject, signal } from '@angular/core';
 import {
   BookMarked,
   BookOpen,
@@ -9,7 +9,8 @@ import {
   Search,
   Star,
 } from 'lucide-angular';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -56,13 +57,28 @@ export class Header {
     },
   ];
 
+  currentUrl = signal(this.router.url);
   repoCount = input<number | null>(null);
   username = input<string>('');
   avatar_url = input<string | null>(null);
-  selectedMenu = signal<string>('Overview');
+
+  selectedMenu = computed(() => {
+    const currentUrl = this.currentUrl();
+
+    return this.navMenu.find((item) => item.route === currentUrl)?.title ?? 'Overview';
+  });
+
+  constructor() {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        const navigation = event as NavigationEnd;
+
+        this.currentUrl.set(navigation.urlAfterRedirects);
+      });
+  }
 
   selectMenu(item: { title: string; route: string }) {
-    this.selectedMenu.set(item.title);
     this.router.navigate([item.route]);
   }
 }
