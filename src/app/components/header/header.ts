@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, input, signal, inject } from '@angular/core';
 import {
   BookMarked,
   BookOpen,
@@ -9,6 +9,7 @@ import {
   Search,
   Star,
 } from 'lucide-angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ import {
   styleUrl: './header.css',
 })
 export class Header {
+  private readonly router = inject(Router);
   readonly Menu = Menu;
   readonly Search = Search;
   readonly BookOpen = BookOpen;
@@ -59,7 +61,8 @@ export class Header {
   avatar_url = input<string | null>(null);
   selectedMenu = signal<string>('Overview');
 
-  selectMenu(title: string) {
-    this.selectedMenu.set(title);
+  selectMenu(item: { title: string; route: string }) {
+    this.selectedMenu.set(item.title);
+    this.router.navigate([item.route]);
   }
 }

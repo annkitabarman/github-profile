@@ -216,8 +216,6 @@ router.get('/contributions/:username/:year', async (req: Request, res: Response)
 
     const data = await response.json();
 
-    console.log('GitHub response:', JSON.stringify(data, null, 2));
-
     if (data.errors) {
       return res.status(500).json({
         message: 'GitHub GraphQL error',
@@ -301,7 +299,6 @@ router.get('/repositories/:username', async (req: Request, res: Response) => {
     });
 
     const result = await response.json();
-    console.log(result);
 
     if (!response.ok || result.errors) {
       console.error('GitHub GraphQL error:', result.errors);

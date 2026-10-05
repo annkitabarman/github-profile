@@ -59,7 +59,7 @@
     @for (item of navMenu; track item.title) {
       <button
         type="button"
-        (click)="selectMenu(item.title)"
+        (click)="selectMenu(item)"
         class="flex h-full shrink-0 items-center border-b-2 border-transparent px-1.5 text-sm text-[#1f2328] whitespace-nowrap hover:cursor-pointer sm:px-2 sm:text-md"
         [class.border-b-[#fd8c73]]="selectedMenu() === item.title"
         [class.font-semibold]="selectedMenu() === item.title"
