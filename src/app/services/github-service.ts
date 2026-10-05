@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { ContributionCalendar } from '../models/github.contribution.model';
 import { environment } from '../../environments/environment';
+import { ContributionActivityResponse } from '../models/contribution-activity.model';
 
 export interface GithubUser {
   login: string;
@@ -45,9 +46,14 @@ export class GithubService {
   }
 
   getContributionsData(username: string, year: number): Observable<ContributionCalendar> {
-    const params = new HttpParams().set('username', username).set('year', year);
-    return this.http.get<ContributionCalendar>(`${this.backendUrl}/github/contributions`, {
-      params,
-    });
+    return this.http.get<ContributionCalendar>(
+      `${this.backendUrl}/github/contributions/${username}/${year}`,
+    );
+  }
+
+  getContributionActivity(username: string, year: number) {
+    return this.http.get<ContributionActivityResponse>(
+      `${this.backendUrl}/github/contribution-activity/${username}/${year}`,
+    );
   }
 }

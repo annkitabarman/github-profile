@@ -1,0 +1,184 @@
+<section class="contribution-activity">
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="flex items-center justify-center py-16">
+      <div
+        class="h-6 w-6 animate-spin rounded-full border-2 border-[#30363d] border-t-[#58a6ff]"
+      ></div>
+    </div>
+  }
+
+  <!-- Error -->
+  @else if (error()) {
+    <div class="rounded-md border border-[#30363d] bg-[#0d1117] px-5 py-8 text-center">
+      <p class="text-sm text-[#8b949e]">Unable to load contribution activity.</p>
+    </div>
+  }
+
+  <!-- No activity -->
+  @else if (!hasActivity()) {
+    <div class="rounded-md border border-[#30363d] px-5 py-8 text-center">
+      <p class="text-sm">No contribution activity for {{ selectedYear() }}.</p>
+    </div>
+  } @else {
+    <!-- Commit activity -->
+    @for (month of commitMonths(); track month.month) {
+      <section class="timeline-section">
+        <!-- Month heading -->
+        <div class="month-heading">
+          <h3>
+            {{ getMonthName(month.month) }}
+          </h3>
+
+          <div class="month-line"></div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+          <!-- Timeline icon -->
+          <div class="timeline-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="h-5 w-5"
+            >
+              <path d="M12 2v20M5 7l7-5 7 5M5 17l7 5 7-5" />
+            </svg>
+          </div>
+
+          <!-- Content -->
+          <div class="timeline-content">
+            <h4 class="activity-title">
+              Created
+              {{ month.totalCommits }}
+              commits in
+              {{ month.repositories.length }}
+              {{ month.repositories.length === 1 ? 'repository' : 'repositories' }}
+            </h4>
+
+            <div class="commit-list">
+              @for (repository of month.repositories; track repository.repository.nameWithOwner) {
+                <div class="commit-row">
+                  <!-- Repository -->
+                  <div class="repository-info">
+                    <a
+                      [href]="repository.repository.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="repository-link"
+                    >
+                      {{ repository.repository.nameWithOwner }}
+                    </a>
+
+                    <span class="commit-count">
+                      {{ repository.commits }}
+                      {{ repository.commits === 1 ? 'commit' : 'commits' }}
+                    </span>
+                  </div>
+
+                  <!-- Bar -->
+                  <div class="commit-bar-wrapper">
+                    <div
+                      class="commit-bar"
+                      [style.width.%]="getCommitBarWidth(repository.commits, month.repositories)"
+                    ></div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Repository creation -->
+    @for (month of repositoryMonths(); track month.month) {
+      <section class="timeline-section">
+        <!-- Month heading only if not already represented -->
+        @if (!commitMonths().some((c) => c.month === month.month)) {
+          <div class="month-heading">
+            <h3>
+              {{ getMonthName(month.month) }}
+            </h3>
+
+            <div class="month-line"></div>
+          </div>
+        }
+
+        <div class="timeline">
+          <!-- Icon -->
+          <div class="timeline-icon repository-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="h-5 w-5"
+            >
+              <rect x="3" y="3" width="18" height="14" rx="2" />
+
+              <path d="M8 21h8" />
+              <path d="M12 17v4" />
+            </svg>
+          </div>
+
+          <!-- Content -->
+          <div class="timeline-content">
+            <h4 class="activity-title">
+              Created
+              {{ month.repositories.length }}
+              {{ month.repositories.length === 1 ? 'repository' : 'repositories' }}
+            </h4>
+
+            @for (repository of month.repositories; track repository.repository.nameWithOwner) {
+              <div class="repository-created-row">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  class="h-5 w-5 shrink-0 text-[#8b949e]"
+                >
+                  <rect x="3" y="3" width="18" height="14" rx="2" />
+
+                  <path d="M8 21h8" />
+                  <path d="M12 17v4" />
+                </svg>
+
+                <a
+                  [href]="repository.repository.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="repository-link"
+                >
+                  {{ repository.repository.nameWithOwner }}
+                </a>
+
+                <div class="repository-meta">
+                  @if (repository.repository.primaryLanguage; as language) {
+                    <span class="language">
+                      <span class="language-dot" [style.background-color]="language.color"></span>
+
+                      {{ language.name }}
+                    </span>
+                  }
+
+                  <span class="created-date">
+                    {{ formatDate(repository.occurredAt) }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Show more -->
+    <button type="button" class="show-more" (click)="toggleShowAll()">
+      {{ showAll() ? 'Show less activity' : 'Show more activity' }}
+    </button>
+  }
+</section>

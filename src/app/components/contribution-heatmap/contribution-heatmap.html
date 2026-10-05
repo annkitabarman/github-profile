@@ -1,7 +1,7 @@
-@if (calendar) {
+@if (calendar()) {
   <div class="mb-4">
-    <span class="text-md text-[#57606a]">
-      {{ calendar.totalContributions }} contributions in {{ selectedYear }}
+    <span class="text-lg font-semibold text-[#57606a]">
+      {{ calendar()?.totalContributions }} contributions in {{ selectedYear() }}
     </span>
   </div>
 }
