@@ -53,12 +53,58 @@ export class ContributionActivity {
 
   readonly showAll = signal(false);
 
+  // =====================================================
+  // Target month
+  //
+  // Current year -> current month
+  // Previous years -> December
+  // =====================================================
+
+  readonly targetMonth = computed(() => {
+    const year = this.selectedYear();
+
+    const now = new Date();
+
+    if (year === now.getFullYear()) {
+      return now.getMonth();
+    }
+
+    return 11; // December
+  });
+
+  // =====================================================
+  // Target month key
+  // Example:
+  // 2026 -> 2026-10
+  // 2025 -> 2025-12
+  // =====================================================
+
+  readonly targetMonthKey = computed(() => {
+    const year = this.selectedYear();
+
+    const month = this.targetMonth() + 1;
+
+    return `${year}-${String(month).padStart(2, '0')}`;
+  });
+
+  // =====================================================
+  // Commit activity
+  // =====================================================
+
   readonly commitMonths = computed<MonthCommitActivity[]>(() => {
     const data = this.activity();
 
     if (!data) {
       return [];
     }
+
+    const selectedYear = this.selectedYear();
+
+    const targetMonth = this.targetMonth();
+
+    // -----------------------------------------------------
+    // Get commits only for the target month
+    // -----------------------------------------------------
 
     const commits = data.commitContributionsByRepository
       .flatMap((repo) =>
@@ -67,51 +113,67 @@ export class ContributionActivity {
           repository: repo.repository,
         })),
       )
+      .filter((commit) => {
+        const date = new Date(commit.occurredAt);
+
+        return date.getFullYear() === selectedYear && date.getMonth() === targetMonth;
+      })
       .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
 
-    const grouped = new Map<string, CommitContribution[]>();
-
-    for (const commit of commits) {
-      const month = this.getMonthKey(commit.occurredAt);
-
-      if (!grouped.has(month)) {
-        grouped.set(month, []);
-      }
-
-      grouped.get(month)!.push(commit);
+    if (commits.length === 0) {
+      return [];
     }
 
-    return Array.from(grouped.entries())
-      .map(([month, contributions]) => {
-        const repositoryMap = new Map<string, RepositoryCommitSummary>();
+    // -----------------------------------------------------
+    // Group by repository
+    // -----------------------------------------------------
 
-        for (const contribution of contributions) {
-          const key = contribution.repository.nameWithOwner;
+    const repositoryMap = new Map<string, RepositoryCommitSummary>();
 
-          const existing = repositoryMap.get(key);
+    for (const commit of commits) {
+      const key = commit.repository.nameWithOwner;
 
-          if (existing) {
-            existing.commits += contribution.commitCount;
-          } else {
-            repositoryMap.set(key, {
-              repository: contribution.repository,
-              commits: contribution.commitCount,
-            });
-          }
-        }
+      const existing = repositoryMap.get(key);
 
-        const repositories = Array.from(repositoryMap.values()).sort(
-          (a, b) => b.commits - a.commits,
-        );
+      if (existing) {
+        existing.commits += commit.commitCount;
+      } else {
+        repositoryMap.set(key, {
+          repository: commit.repository,
 
-        return {
-          month,
-          repositories,
-          totalCommits: repositories.reduce((sum, repo) => sum + repo.commits, 0),
-        };
-      })
-      .sort((a, b) => new Date(`${b.month}-01`).getTime() - new Date(`${a.month}-01`).getTime());
+          commits: commit.commitCount,
+        });
+      }
+    }
+
+    // -----------------------------------------------------
+    // Sort repositories by commit count
+    // -----------------------------------------------------
+
+    const repositories = Array.from(repositoryMap.values()).sort((a, b) => b.commits - a.commits);
+
+    // -----------------------------------------------------
+    // Return one month
+    // -----------------------------------------------------
+
+    return [
+      {
+        month: this.targetMonthKey(),
+
+        repositories,
+
+        totalCommits: repositories.reduce(
+          (total, repository) => total + repository.commits,
+
+          0,
+        ),
+      },
+    ];
   });
+
+  // =====================================================
+  // Repository creation activity
+  // =====================================================
 
   readonly repositoryMonths = computed<MonthRepositoryActivity[]>(() => {
     const data = this.activity();
@@ -120,44 +182,46 @@ export class ContributionActivity {
       return [];
     }
 
-    const repositories = [...data.repositoryContributions.nodes].sort(
-      (a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime(),
-    );
+    const selectedYear = this.selectedYear();
 
-    const grouped = new Map<string, RepositoryContribution[]>();
+    const targetMonth = this.targetMonth();
 
-    for (const repo of repositories) {
-      const month = this.getMonthKey(repo.occurredAt);
+    // -----------------------------------------------------
+    // Only repositories created during target month
+    // -----------------------------------------------------
 
-      if (!grouped.has(month)) {
-        grouped.set(month, []);
-      }
+    const repositories = data.repositoryContributions.nodes
+      .filter((repository) => {
+        const date = new Date(repository.occurredAt);
 
-      grouped.get(month)!.push(repo);
+        return date.getFullYear() === selectedYear && date.getMonth() === targetMonth;
+      })
+      .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime());
+
+    if (repositories.length === 0) {
+      return [];
     }
 
-    return Array.from(grouped.entries())
-      .map(([month, repositories]) => ({
-        month,
+    return [
+      {
+        month: this.targetMonthKey(),
+
         repositories,
-      }))
-      .sort((a, b) => new Date(`${b.month}-01`).getTime() - new Date(`${a.month}-01`).getTime());
+      },
+    ];
   });
+
+  // =====================================================
+  // Has activity
+  // =====================================================
 
   readonly hasActivity = computed(() => {
-    const data = this.activity();
-
-    if (!data) {
-      return false;
-    }
-
-    return (
-      data.totalCommitContributions > 0 ||
-      data.repositoryContributions.nodes.length > 0 ||
-      data.issueContributions.nodes.length > 0 ||
-      data.pullRequestContributions.nodes.length > 0
-    );
+    return this.commitMonths().length > 0 || this.repositoryMonths().length > 0;
   });
+
+  // =====================================================
+  // Load data whenever selected year changes
+  // =====================================================
 
   constructor() {
     effect(() => {
@@ -167,30 +231,47 @@ export class ContributionActivity {
     });
   }
 
+  // =====================================================
+  // API
+  // =====================================================
+
   private loadActivity(year: number): void {
     this.loading.set(true);
+
     this.error.set(false);
+
     this.showAll.set(false);
 
     this.githubService.getContributionActivity('annkitabarman', year).subscribe({
       next: (data) => {
         this.activity.set(data);
+
         this.loading.set(false);
       },
 
       error: (error) => {
-        console.error('Failed to load contribution activity', error);
+        console.error('Failed to load contribution activity:', error);
 
         this.activity.set(null);
+
         this.loading.set(false);
+
         this.error.set(true);
       },
     });
   }
 
+  // =====================================================
+  // Show more / less
+  // =====================================================
+
   toggleShowAll(): void {
     this.showAll.update((value) => !value);
   }
+
+  // =====================================================
+  // Month name
+  // =====================================================
 
   getMonthName(month: string): string {
     const date = new Date(`${month}-01T00:00:00`);
@@ -200,6 +281,10 @@ export class ContributionActivity {
       year: 'numeric',
     });
   }
+
+  // =====================================================
+  // Commit bar width
+  // =====================================================
 
   getCommitBarWidth(commits: number, repositories: RepositoryCommitSummary[]): number {
     const max = Math.max(...repositories.map((repository) => repository.commits));
@@ -211,19 +296,14 @@ export class ContributionActivity {
     return Math.max((commits / max) * 100, 8);
   }
 
+  // =====================================================
+  // Date formatting
+  // =====================================================
+
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
     });
-  }
-
-  private getMonthKey(dateString: string): string {
-    const date = new Date(dateString);
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-
-    return `${year}-${month}`;
   }
 }

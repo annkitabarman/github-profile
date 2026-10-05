@@ -1,8 +1,4 @@
 <div class="w-full">
-  <!-- ========================= -->
-  <!-- Popular repositories      -->
-  <!-- ========================= -->
-
   <div class="mb-3 flex items-center justify-between">
     <h2 class="text-base font-semibold text-[#1f2328]">Popular repositories</h2>
 
@@ -17,24 +13,29 @@
     }
   </div>
 
-  <!-- ========================= -->
-  <!-- Contributions              -->
-  <!-- ========================= -->
-
   <div class="mt-8">
-    <!-- ================================= -->
-    <!-- Heatmap + desktop year navigation -->
-    <!-- ================================= -->
-
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_160px]">
-      <!-- Heatmap -->
       <div class="min-w-0">
-        <app-contribution-heatmap [selectedYear]="selectedYear()" />
-      </div>
+        <div class="min-w-0">
+          <app-contribution-heatmap [selectedYear]="selectedYear()" />
+        </div>
+        <div class="mt-8">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-base font-semibold text-[#1f2328]">Contribution activity</h2>
+            <select
+              class="rounded-md border border-[#d0d7de] bg-white px-3 py-2 text-sm text-[#1f2328] lg:hidden"
+              [value]="selectedYear()"
+              (change)="selectYear(+$any($event.target).value)"
+            >
+              @for (year of availableYears; track year) {
+                <option [value]="year">Year: {{ year }}</option>
+              }
+            </select>
+          </div>
 
-      <!-- ============================== -->
-      <!-- Desktop sticky year navigation -->
-      <!-- ============================== -->
+          <app-contribution-activity [selectedYear]="selectedYear()" />
+        </div>
+      </div>
 
       <aside class="hidden lg:block">
         <div class="sticky top-6">
@@ -54,36 +55,6 @@
           }
         </div>
       </aside>
-    </div>
-
-    <!-- ================================= -->
-    <!-- Contribution activity             -->
-    <!-- ================================= -->
-
-    <div class="mt-8">
-      <!-- Mobile/tablet header -->
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-base font-semibold text-[#1f2328]">Contribution activity</h2>
-
-        <!--
-          Only show dropdown below lg.
-          On desktop the sticky sidebar is used instead.
-        -->
-        <select
-          class="rounded-md border border-[#30363d] bg-[#21262d] px-3 py-2 text-sm text-white lg:hidden"
-          [value]="selectedYear()"
-          (change)="selectYear(+$any($event.target).value)"
-        >
-          @for (year of availableYears; track year) {
-            <option [value]="year">Year: {{ year }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Your contribution activity content goes here -->
-      <div>
-        <app-contribution-activity [selectedYear]="selectedYear()" />
-      </div>
     </div>
   </div>
 </div>
