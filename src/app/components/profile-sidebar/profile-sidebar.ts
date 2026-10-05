@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { GithubService, GithubUser } from '../../services/github-service';
+import { Component, input } from '@angular/core';
+import { GithubUser } from '../../services/github-service';
 
 import {
   Building2,
@@ -19,7 +19,7 @@ import {
   templateUrl: './profile-sidebar.html',
   styleUrl: './profile-sidebar.css',
 })
-export class ProfileSidebar implements OnInit {
+export class ProfileSidebar {
   readonly Users = Users;
   readonly Building2 = Building2;
   readonly MapPin = MapPin;
@@ -28,19 +28,5 @@ export class ProfileSidebar implements OnInit {
   readonly Clock = Clock;
   readonly User = User;
 
-  user = signal<GithubUser | null>(null);
-  private readonly githubService = inject(GithubService);
-
-  ngOnInit(): void {
-    this.githubService.getUserDetails('annkitabarman').subscribe({
-      next: (user) => {
-        this.user.set(user);
-        console.log(user);
-      },
-
-      error: (err) => {
-        console.log('Failed to fetch github profile.', err);
-      },
-    });
-  }
+  user = input<GithubUser | null>(null);
 }

@@ -80,11 +80,13 @@
 
       Repositories
 
-      <span
-        class="rounded-full bg-[#afb8c1]/20 px-1.5 py-0.5 text-[10px] font-semibold sm:px-2 sm:text-xs"
-      >
-        13
-      </span>
+      @if (repoCount()) {
+        <span
+          class="rounded-full bg-[#afb8c1]/20 px-1.5 py-0.5 text-[10px] font-semibold sm:px-2 sm:text-xs"
+        >
+          {{ repoCount() }}
+        </span>
+      }
     </button>
 
     <!-- Projects -->

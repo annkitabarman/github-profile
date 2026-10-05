@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import {
   BookMarked,
   BookOpen,
@@ -27,6 +27,7 @@ export class Header {
   readonly Star = Star;
 
   showMore = false;
+  repoCount = input<number | null>(null);
 
   toggleMore(): void {
     this.showMore = !this.showMore;
