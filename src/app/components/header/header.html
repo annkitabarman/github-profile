@@ -1,0 +1,140 @@
+<header class="bg-white text-[#1f2328]">
+  <!-- ========================= -->
+  <!-- Top Navigation             -->
+  <!-- ========================= -->
+  <div class="flex h-[64px] items-center px-3 sm:h-[76px] sm:px-5">
+    <!-- Hamburger -->
+    <button
+      type="button"
+      class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] hover:text-[#1f2328] sm:h-12 sm:w-12"
+    >
+      <lucide-icon [img]="Menu" [size]="20"></lucide-icon>
+    </button>
+
+    <!-- GitHub Logo -->
+    <img src="/github-logo.svg" alt="GitHub" class="ml-3 h-8 w-8 invert sm:ml-5 sm:h-10 sm:w-10" />
+
+    <!-- Username -->
+    <span class="ml-3 truncate text-base font-semibold sm:ml-5 sm:text-xl"> annkitabarman </span>
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- ========================= -->
+    <!-- Desktop Search             -->
+    <!-- ========================= -->
+    <div
+      class="hidden h-9 w-64 items-center rounded-lg border border-[#d0d7de] bg-white px-4 text-[#57606a] lg:flex"
+    >
+      <lucide-icon [img]="Search" [size]="20"></lucide-icon>
+
+      <span class="ml-3 text-[16px]"> Type </span>
+
+      <kbd class="ml-2 rounded border border-[#d0d7de] px-1.5 py-0.5 text-xs text-[#57606a]">
+        /
+      </kbd>
+
+      <span class="ml-2 text-[16px]"> to search </span>
+    </div>
+
+    <!-- ========================= -->
+    <!-- Mobile / Tablet Search     -->
+    <!-- ========================= -->
+    <button
+      type="button"
+      class="flex h-10 w-10 items-center justify-center text-[#57606a] hover:text-[#1f2328] lg:hidden"
+    >
+      <lucide-icon [img]="Search" [size]="22"></lucide-icon>
+    </button>
+
+    <!-- Profile -->
+    <img
+      src="https://avatars.githubusercontent.com/u/1?v=4"
+      alt="Profile"
+      class="ml-2 h-8 w-8 shrink-0 rounded-full object-cover sm:ml-5 sm:h-10 sm:w-10"
+    />
+  </div>
+
+  <!-- ========================= -->
+  <!-- Profile Navigation          -->
+  <!-- ========================= -->
+  <nav
+    class="flex h-[64px] items-end gap-1 overflow-x-auto border-b border-[#d0d7de] px-2 sm:gap-2 sm:px-5"
+  >
+    <!-- Overview -->
+    <button
+      type="button"
+      class="flex h-[56px] shrink-0 items-center gap-1 border-b-2 border-[#fd8c73] px-1.5 text-[13px] font-semibold text-[#1f2328] whitespace-nowrap sm:h-[64px] sm:gap-2 sm:px-2 sm:text-[17px]"
+    >
+      <lucide-icon
+        [img]="BookOpen"
+        [size]="18"
+        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
+      ></lucide-icon>
+
+      Overview
+    </button>
+
+    <!-- Repositories -->
+    <button
+      type="button"
+      class="flex h-[56px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[64px] sm:gap-2 sm:px-2 sm:text-[17px]"
+    >
+      <lucide-icon
+        [img]="BookMarked"
+        [size]="18"
+        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
+      ></lucide-icon>
+
+      Repositories
+
+      <span
+        class="rounded-full bg-[#afb8c1]/20 px-1.5 py-0.5 text-[10px] font-semibold sm:px-2 sm:text-xs"
+      >
+        13
+      </span>
+    </button>
+
+    <!-- Projects -->
+    <button
+      type="button"
+      class="flex h-[56px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[64px] sm:gap-2 sm:px-2 sm:text-[17px]"
+    >
+      <lucide-icon
+        [img]="LayoutGrid"
+        [size]="18"
+        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
+      ></lucide-icon>
+
+      Projects
+    </button>
+
+    <!-- Packages -->
+    <button
+      type="button"
+      class="flex h-[56px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[64px] sm:gap-2 sm:px-2 sm:text-[17px]"
+    >
+      <lucide-icon
+        [img]="Package"
+        [size]="18"
+        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
+      ></lucide-icon>
+
+      Packages
+    </button>
+
+    <!-- Stars -->
+    <button
+      type="button"
+      class="flex h-[56px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[64px] sm:gap-2 sm:px-2 sm:text-[17px]"
+    >
+      <lucide-icon
+        [img]="Star"
+        [size]="18"
+        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
+      ></lucide-icon>
+
+      Stars
+    </button>
+  </nav>
+</header>
