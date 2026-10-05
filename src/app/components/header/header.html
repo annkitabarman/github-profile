@@ -1,5 +1,5 @@
-<header class="bg-white text-[#1f2328]">
-  <div class="flex h-[56px] items-center px-3 sm:h-[64px] sm:px-5">
+<header class="bg-gray-100 text-[#1f2328]">
+  <div class="flex h-[56px] shrink-0 items-center px-3 sm:h-[72px] sm:px-5">
     <button
       type="button"
       class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-[#d0d7de] text-[#57606a] hover:bg-[#f6f8fa] hover:text-[#1f2328] sm:h-10 sm:w-10"
@@ -54,13 +54,13 @@
   </div>
 
   <nav
-    class="flex h-[36px] items-end gap-1 overflow-x-auto border-b border-[#d0d7de] px-2 sm:h-[42px] sm:gap-2 sm:px-5"
+    class="flex h-[36px] shrink-0 items-center gap-1 overflow-x-auto border-b border-[#d0d7de] px-2 sm:h-[42px] sm:gap-2 sm:px-5"
   >
     @for (item of navMenu; track item.title) {
       <button
         type="button"
         (click)="selectMenu(item.title)"
-        class="flex h-[36px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-sm text-[#1f2328] whitespace-nowrap sm:h-[42px] sm:gap-2 sm:px-2 sm:text-md hover:cursor-pointer"
+        class="flex h-full shrink-0 items-center border-b-2 border-transparent px-1.5 text-sm text-[#1f2328] whitespace-nowrap hover:cursor-pointer sm:px-2 sm:text-md"
         [class.border-b-[#fd8c73]]="selectedMenu() === item.title"
         [class.font-semibold]="selectedMenu() === item.title"
       >
@@ -70,7 +70,7 @@
           <lucide-icon
             [img]="item.icon"
             [size]="18"
-            class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
+            class="hidden sm:block sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
           ></lucide-icon>
 
           {{ item.title }}
