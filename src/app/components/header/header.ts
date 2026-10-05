@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import {
   BookMarked,
   BookOpen,
@@ -25,13 +25,46 @@ export class Header {
   readonly LayoutGrid = LayoutGrid;
   readonly Package = Package;
   readonly Star = Star;
+  navMenu = [
+    {
+      title: 'Overview',
+      icon: BookOpen,
+      route: '/',
+    },
+    {
+      title: 'Repositories',
+      icon: BookMarked,
+      route: '/repositories',
+      count: true,
+    },
+    {
+      title: 'Projects',
+      icon: LayoutGrid,
+      route: '/projects',
+    },
+    {
+      title: 'Packages',
+      icon: Package,
+      route: '/package',
+    },
+    {
+      title: 'Stars',
+      icon: Star,
+      route: '/stars',
+    },
+  ];
 
   showMore = false;
   repoCount = input<number | null>(null);
   username = input<string>('');
   avatar_url = input<string | null>(null);
+  selectedMenu = signal<string>('Overview');
 
   toggleMore(): void {
     this.showMore = !this.showMore;
+  }
+
+  selectMenu(title: string) {
+    this.selectedMenu.set(title);
   }
 }

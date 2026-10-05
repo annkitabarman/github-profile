@@ -54,79 +54,36 @@
   </div>
 
   <nav
-    class="flex h-[48px] items-end gap-1 overflow-x-auto border-b border-[#d0d7de] px-2 sm:h-[56px] sm:gap-2 sm:px-5"
+    class="flex h-[36px] items-end gap-1 overflow-x-auto border-b border-[#d0d7de] px-2 sm:h-[42px] sm:gap-2 sm:px-5"
   >
-    <button
-      type="button"
-      class="flex h-[48px] shrink-0 items-center gap-1 border-b-2 border-[#fd8c73] px-1.5 text-[13px] font-semibold text-[#1f2328] whitespace-nowrap sm:h-[56px] sm:gap-2 sm:px-2 sm:text-[17px]"
-    >
-      <lucide-icon
-        [img]="BookOpen"
-        [size]="18"
-        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
-      ></lucide-icon>
-
-      Overview
-    </button>
-
-    <button
-      type="button"
-      class="flex h-[48px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[56px] sm:gap-2 sm:px-2 sm:text-[17px]"
-    >
-      <lucide-icon
-        [img]="BookMarked"
-        [size]="18"
-        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
-      ></lucide-icon>
-
-      Repositories
-
-      @if (repoCount()) {
+    @for (item of navMenu; track item.title) {
+      <button
+        type="button"
+        (click)="selectMenu(item.title)"
+        class="flex h-[36px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-sm text-[#1f2328] whitespace-nowrap sm:h-[42px] sm:gap-2 sm:px-2 sm:text-md hover:cursor-pointer"
+        [class.border-b-[#fd8c73]]="selectedMenu() === item.title"
+        [class.font-semibold]="selectedMenu() === item.title"
+      >
         <span
-          class="rounded-full bg-[#afb8c1]/20 px-1.5 py-0.5 text-[10px] font-semibold sm:px-2 sm:text-xs"
+          class="flex items-center gap-1 rounded-md px-1.5 py-1.5 hover:bg-[#f6f8fa] sm:gap-2 sm:px-2"
         >
-          {{ repoCount() }}
+          <lucide-icon
+            [img]="item.icon"
+            [size]="18"
+            class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
+          ></lucide-icon>
+
+          {{ item.title }}
+
+          @if (item.count && repoCount()) {
+            <span
+              class="rounded-full bg-[#afb8c1]/20 px-1.5 py-0.5 text-[10px] font-semibold sm:px-2 sm:text-xs"
+            >
+              {{ repoCount() }}
+            </span>
+          }
         </span>
-      }
-    </button>
-
-    <button
-      type="button"
-      class="flex h-[48px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[56px] sm:gap-2 sm:px-2 sm:text-[17px]"
-    >
-      <lucide-icon
-        [img]="LayoutGrid"
-        [size]="18"
-        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
-      ></lucide-icon>
-
-      Projects
-    </button>
-
-    <button
-      type="button"
-      class="flex h-[48px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[56px] sm:gap-2 sm:px-2 sm:text-[17px]"
-    >
-      <lucide-icon
-        [img]="Package"
-        [size]="18"
-        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
-      ></lucide-icon>
-
-      Packages
-    </button>
-
-    <button
-      type="button"
-      class="flex h-[48px] shrink-0 items-center gap-1 border-b-2 border-transparent px-1.5 text-[13px] text-[#1f2328] whitespace-nowrap hover:border-[#8c959f] sm:h-[56px] sm:gap-2 sm:px-2 sm:text-[17px]"
-    >
-      <lucide-icon
-        [img]="Star"
-        [size]="18"
-        class="sm:[&_svg]:h-[22px] sm:[&_svg]:w-[22px]"
-      ></lucide-icon>
-
-      Stars
-    </button>
+      </button>
+    }
   </nav>
 </header>
