@@ -9,6 +9,7 @@
     <p class="text-sm text-[#57606a]">Unable to load contribution activity.</p>
   </div>
 } @else if (!hasActivity()) {
+  <!-- No activity -->
   <div class="rounded-md border border-[#d0d7de] px-5 py-8 text-center">
     <p class="text-sm text-[#57606a]">
       No contribution activity for
@@ -17,42 +18,24 @@
   </div>
 } @else {
   @for (month of commitMonths(); track month.month) {
-    <section class="mb-8">
-      <!-- Month heading -->
-      <div class="mb-5 flex items-center gap-4">
-        <h3 class="shrink-0 text-base font-semibold text-[#1f2328]">
+    <section class="mb-8 w-full min-w-0">
+      <div class="mb-5 flex w-full min-w-0 items-center gap-4">
+        <h3 class="shrink-0 whitespace-nowrap text-base font-semibold text-[#1f2328]">
           {{ getMonthName(month.month) }}
         </h3>
 
-        <div class="h-px flex-1 bg-[#d0d7de]"></div>
+        <div class="h-px min-w-0 flex-1 bg-[#d0d7de]"></div>
       </div>
-
-      <!-- Timeline -->
-      <div class="relative flex pl-6">
-        <!-- Vertical line -->
+      <div class="relative flex w-full min-w-0">
         <div class="absolute bottom-[-32px] left-[25px] top-0 w-px bg-[#d0d7de]"></div>
-
-        <!-- Timeline icon -->
         <div
-          class="relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#f6f8fa] text-[#57606a] ring-[5px] ring-white"
+          class="relative z-10 ml-[4px] flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#f6f8fa] text-[#57606a] ring-[5px] ring-white"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            class="h-5 w-5"
-          >
-            <path d="M12 2v20" />
-            <path d="M5 7l7-5 7 5" />
-            <path d="M5 17l7 5 7-5" />
-          </svg>
+          <lucide-icon [img]="GitCommitHorizontal" class="h-6 w-6"></lucide-icon>
         </div>
 
-        <!-- Timeline content -->
         <div class="min-w-0 flex-1 pl-5 pt-1">
-          <!-- Activity title -->
-          <h4 class="mb-5 text-lg font-normal leading-6 text-[#1f2328]">
+          <h4 class="mb-5 break-words text-lg font-normal leading-6 text-[#1f2328]">
             Created
             {{ month.totalCommits }}
 
@@ -65,14 +48,12 @@
             {{ month.repositories.length === 1 ? 'repository' : 'repositories' }}
           </h4>
 
-          <!-- Repository commits -->
-          <div class="flex flex-col gap-4">
+          <div class="flex w-full min-w-0 flex-col gap-4">
             @for (repository of month.repositories; track repository.repository.nameWithOwner) {
               <div
-                class="grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(280px,1fr)_minmax(120px,1fr)] sm:gap-[18px]"
+                class="grid w-full min-w-0 grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(80px,0.35fr)] sm:gap-4"
               >
-                <!-- Repository info -->
-                <div class="flex min-w-0 flex-wrap items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <a
                     [href]="repository.repository.url"
                     target="_blank"
@@ -82,15 +63,14 @@
                     {{ repository.repository.nameWithOwner }}
                   </a>
 
-                  <span class="shrink-0 text-sm text-[#57606a]">
+                  <span class="shrink-0 whitespace-nowrap text-sm text-[#57606a]">
                     {{ repository.commits }}
 
                     {{ repository.commits === 1 ? 'commit' : 'commits' }}
                   </span>
                 </div>
 
-                <!-- Commit bar -->
-                <div class="h-3 w-full overflow-hidden rounded-full bg-[#f6f8fa]">
+                <div class="h-3 min-w-0 w-full overflow-hidden rounded-full bg-[#f6f8fa]">
                   <div
                     class="h-full min-w-[8px] rounded-full bg-[#2da44e] transition-all duration-300"
                     [style.width.%]="getCommitBarWidth(repository.commits, month.repositories)"
@@ -105,69 +85,42 @@
   }
 
   @for (month of repositoryMonths(); track month.month) {
-    <section class="mb-8">
-      <!-- Month heading only if there was no commit section -->
+    <section class="mb-8 w-full min-w-0">
       @if (!commitMonths().some((commitMonth) => commitMonth.month === month.month)) {
-        <div class="mb-5 flex items-center gap-4">
-          <h3 class="shrink-0 text-base font-semibold text-[#1f2328]">
+        <div class="mb-5 flex w-full min-w-0 items-center gap-4">
+          <h3 class="shrink-0 whitespace-nowrap text-base font-semibold text-[#1f2328]">
             {{ getMonthName(month.month) }}
           </h3>
 
-          <div class="h-px flex-1 bg-[#d0d7de]"></div>
+          <div class="h-px min-w-0 flex-1 bg-[#d0d7de]"></div>
         </div>
       }
 
-      <!-- Timeline -->
-      <div class="relative flex pl-6">
-        <!-- Vertical line -->
+      <div class="relative flex w-full min-w-0">
         <div class="absolute bottom-[-32px] left-[25px] top-0 w-px bg-[#d0d7de]"></div>
 
-        <!-- Timeline icon -->
         <div
-          class="relative z-10 flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#f6f8fa] text-[#57606a] ring-[5px] ring-white"
+          class="relative z-10 ml-[4px] flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-[#f6f8fa] text-[#57606a] ring-[5px] ring-white"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            class="h-5 w-5"
-          >
-            <rect x="3" y="3" width="18" height="14" rx="2" />
-
-            <path d="M8 21h8" />
-            <path d="M12 17v4" />
-          </svg>
+          <lucide-icon [img]="FolderGit2" class="h-6 w-6"></lucide-icon>
         </div>
 
-        <!-- Content -->
         <div class="min-w-0 flex-1 pl-5 pt-1">
-          <h4 class="mb-5 text-lg font-normal leading-6 text-[#1f2328]">
+          <h4 class="mb-5 break-words text-lg font-normal leading-6 text-[#1f2328]">
             Created
             {{ month.repositories.length }}
 
             {{ month.repositories.length === 1 ? 'repository' : 'repositories' }}
           </h4>
 
-          <!-- Repositories -->
-          <div class="flex flex-col">
+          <div class="flex w-full min-w-0 flex-col">
             @for (repository of month.repositories; track repository.repository.nameWithOwner) {
-              <div class="flex min-h-[42px] items-center gap-3 py-1.5">
-                <!-- Repository icon -->
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
+              <div class="flex min-h-[42px] min-w-0 w-full items-center gap-3 py-1.5">
+                <lucide-icon
+                  [img]="FolderGit2"
                   class="h-5 w-5 shrink-0 text-[#57606a]"
-                >
-                  <rect x="3" y="3" width="18" height="14" rx="2" />
+                ></lucide-icon>
 
-                  <path d="M8 21h8" />
-                  <path d="M12 17v4" />
-                </svg>
-
-                <!-- Repository name -->
                 <a
                   [href]="repository.repository.url"
                   target="_blank"
@@ -177,22 +130,23 @@
                   {{ repository.repository.nameWithOwner }}
                 </a>
 
-                <!-- Metadata -->
-                <div class="ml-auto flex shrink-0 items-center gap-5 text-sm text-[#57606a]">
+                <div
+                  class="ml-auto flex min-w-0 shrink-0 items-center gap-3 text-sm text-[#57606a] sm:gap-5"
+                >
                   @if (repository.repository.primaryLanguage; as language) {
-                    <span class="flex items-center gap-1.5">
+                    <span class="flex shrink-0 items-center gap-1.5">
                       <span
                         class="h-3.5 w-3.5 rounded-full border border-black/10"
                         [style.background-color]="language.color"
                       ></span>
 
-                      <span class="hidden sm:inline">
+                      <span class="hidden whitespace-nowrap sm:inline">
                         {{ language.name }}
                       </span>
                     </span>
                   }
 
-                  <span>
+                  <span class="shrink-0 whitespace-nowrap">
                     {{ formatDate(repository.occurredAt) }}
                   </span>
                 </div>

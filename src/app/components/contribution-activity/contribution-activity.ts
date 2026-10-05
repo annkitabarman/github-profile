@@ -7,15 +7,19 @@ import {
   input,
   signal,
 } from '@angular/core';
-
 import { GithubService } from '../../services/github-service';
-
 import {
   ContributionActivityResponse,
-  CommitContribution,
   GithubRepository,
   RepositoryContribution,
 } from '../../models/contribution-activity.model';
+import {
+  GitCommitHorizontal,
+  GitPullRequest,
+  FolderGit2,
+  GitBranch,
+  LucideAngularModule,
+} from 'lucide-angular';
 
 interface RepositoryCommitSummary {
   repository: GithubRepository;
@@ -39,8 +43,11 @@ interface MonthRepositoryActivity {
   templateUrl: './contribution-activity.html',
   styleUrl: './contribution-activity.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [LucideAngularModule],
 })
 export class ContributionActivity {
+  readonly GitCommitHorizontal = GitCommitHorizontal;
+  readonly FolderGit2 = FolderGit2;
   private readonly githubService = inject(GithubService);
 
   readonly selectedYear = input.required<number>();
@@ -53,13 +60,6 @@ export class ContributionActivity {
 
   readonly showAll = signal(false);
 
-  // =====================================================
-  // Target month
-  //
-  // Current year -> current month
-  // Previous years -> December
-  // =====================================================
-
   readonly targetMonth = computed(() => {
     const year = this.selectedYear();
 
@@ -71,13 +71,6 @@ export class ContributionActivity {
 
     return 11; // December
   });
-
-  // =====================================================
-  // Target month key
-  // Example:
-  // 2026 -> 2026-10
-  // 2025 -> 2025-12
-  // =====================================================
 
   readonly targetMonthKey = computed(() => {
     const year = this.selectedYear();

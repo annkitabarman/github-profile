@@ -12,27 +12,9 @@ import { ContributionCalendar } from '../../models/github.contribution.model';
   styleUrl: './contribution-heatmap.css',
 })
 export class ContributionHeatmap implements OnDestroy {
-  // ============================================
-  // Signal input
-  // ============================================
-
   selectedYear = input.required<number>();
-
-  // ============================================
-  // Signal view query
-  // ============================================
-
   chartElement = viewChild<ElementRef<HTMLDivElement>>('chart');
-
-  // ============================================
-  // Contribution data
-  // ============================================
-
   calendar = signal<ContributionCalendar | null>(null);
-
-  // ============================================
-  // ECharts instance
-  // ============================================
 
   private chart: echarts.ECharts | null = null;
 
@@ -41,12 +23,10 @@ export class ContributionHeatmap implements OnDestroy {
       const year = this.selectedYear();
       const chartElement = this.chartElement();
 
-      // Don't do anything until both exist
       if (!year || !chartElement) {
         return;
       }
 
-      // Fetch contributions whenever selectedYear changes
       const subscription = this.githubService
         .getContributionsData('annkitabarman', year)
         .subscribe({
@@ -65,16 +45,11 @@ export class ContributionHeatmap implements OnDestroy {
           },
         });
 
-      // Cancel previous request when selectedYear changes
       onCleanup(() => {
         subscription.unsubscribe();
       });
     });
   }
-
-  // ============================================
-  // Flatten contribution data
-  // ============================================
 
   private getContributionData(): [string, number][] {
     const calendar = this.calendar();
@@ -87,10 +62,6 @@ export class ContributionHeatmap implements OnDestroy {
       week.contributionDays.map((day): [string, number] => [day.date, day.contributionCount]),
     );
   }
-
-  // ============================================
-  // Date range
-  // ============================================
 
   private getDateRange(): [string, string] {
     const calendar = this.calendar();
@@ -111,10 +82,6 @@ export class ContributionHeatmap implements OnDestroy {
 
     return [startDate, endDate];
   }
-
-  // ============================================
-  // Create ECharts instance
-  // ============================================
 
   private createChart(): void {
     const chartElement = this.chartElement();
@@ -138,10 +105,6 @@ export class ContributionHeatmap implements OnDestroy {
           `;
         },
       },
-
-      // ==========================================
-      // Contribution colors
-      // ==========================================
 
       visualMap: {
         type: 'piecewise',
@@ -172,10 +135,6 @@ export class ContributionHeatmap implements OnDestroy {
           },
         ],
       },
-
-      // ==========================================
-      // Calendar
-      // ==========================================
 
       calendar: {
         range: this.getDateRange(),
@@ -213,10 +172,6 @@ export class ContributionHeatmap implements OnDestroy {
         },
       },
 
-      // ==========================================
-      // Heatmap
-      // ==========================================
-
       series: [
         {
           type: 'heatmap',
@@ -234,10 +189,6 @@ export class ContributionHeatmap implements OnDestroy {
 
     window.addEventListener('resize', this.handleResize);
   }
-
-  // ============================================
-  // Update existing chart
-  // ============================================
 
   private updateChart(): void {
     if (!this.chart) {
@@ -257,17 +208,9 @@ export class ContributionHeatmap implements OnDestroy {
     });
   }
 
-  // ============================================
-  // Resize
-  // ============================================
-
   private handleResize = (): void => {
     this.chart?.resize();
   };
-
-  // ============================================
-  // Cleanup
-  // ============================================
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.handleResize);
