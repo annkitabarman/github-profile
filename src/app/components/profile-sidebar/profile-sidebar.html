@@ -1,0 +1,205 @@
+<!-- ====================================================== -->
+<!-- DESKTOP PROFILE SIDEBAR - 768px and above              -->
+<!-- ====================================================== -->
+
+<div class="hidden md:block">
+  <!-- Avatar -->
+  <div class="relative">
+    <img
+      src="https://github.com/identicons/placeholder.png"
+      alt="Profile"
+      class="h-48 w-48 rounded-full border border-[#d0d7de] object-cover lg:h-[296px] lg:w-[296px]"
+    />
+  </div>
+
+  <!-- Name -->
+  <h1 class="mt-5 text-3xl font-semibold">Ankita Barman</h1>
+
+  <!-- Username -->
+  <p class="text-xl text-[#59636e]">annkitabarman · she/her</p>
+
+  <!-- Bio -->
+  <p class="mt-5 text-lg leading-7">
+    Frontend Developer Angular, React.JS, JavaScript, TypeScript, Node.js, HTML, CSS
+  </p>
+
+  <!-- Edit profile -->
+  <button
+    type="button"
+    class="mt-5 w-full rounded-md border border-[#d0d7de] bg-[#f6f8fa] px-4 py-1.5 text-sm font-semibold text-[#1f2328] shadow-sm hover:bg-[#f3f4f6]"
+  >
+    Edit profile
+  </button>
+
+  <!-- Followers -->
+  <div class="mt-5 flex items-center gap-1 text-sm text-[#57606a]">
+    <lucide-icon [img]="Users" [size]="16"></lucide-icon>
+
+    <span class="font-semibold text-[#1f2328]">11</span>
+    followers
+
+    <span class="mx-1">·</span>
+
+    <span class="font-semibold text-[#1f2328]">3</span>
+    following
+  </div>
+
+  <!-- Profile links -->
+  <div class="mt-5 space-y-3 text-sm">
+    <!-- Company -->
+    <div class="flex items-center gap-3">
+      <lucide-icon [img]="Building2" [size]="16" class="text-[#57606a]"></lucide-icon>
+
+      <span>UptimeAI</span>
+    </div>
+
+    <!-- Location -->
+    <div class="flex items-center gap-3">
+      <lucide-icon [img]="MapPin" [size]="16" class="text-[#57606a]"></lucide-icon>
+
+      <span>Bangalore, India</span>
+    </div>
+
+    <!-- Email -->
+    <a
+      href="mailto:kushwaha.shreeram@gmail.com"
+      class="flex items-center gap-3 hover:text-[#0969da]"
+    >
+      <lucide-icon [img]="Mail" [size]="16" class="text-[#57606a]"></lucide-icon>
+
+      kushwaha.shreeram@gmail.com
+    </a>
+
+    <!-- Website -->
+    <a
+      href="https://shreeramk.com"
+      target="_blank"
+      class="flex items-center gap-3 hover:text-[#0969da]"
+    >
+      <lucide-icon [img]="Link" [size]="16" class="text-[#57606a]"></lucide-icon>
+
+      http://shreeramk.com
+    </a>
+
+    <!-- LinkedIn -->
+    <a href="#" class="flex items-center gap-3 hover:text-[#0969da]">
+      <lucide-icon [img]="Linkedin" [size]="16" class="text-[#57606a]"></lucide-icon>
+
+      in/shreeramkushwaha
+    </a>
+
+    <!-- X -->
+    <a href="#" class="flex items-center gap-3 hover:text-[#0969da]">
+      <span class="w-4 text-[#57606a]">𝕏</span>
+
+      @pom_fret
+    </a>
+  </div>
+
+  <div class="mt-5 border-t border-[#d0d7de]"></div>
+</div>
+
+<!-- ====================================================== -->
+<!-- MOBILE PROFILE - below 768px                           -->
+<!-- ====================================================== -->
+
+<div class="block px-4 py-6 sm:px-0 md:hidden">
+  <!-- Name + Avatar -->
+  <div class="flex items-center gap-5">
+    <!-- Avatar -->
+    <div class="relative shrink-0">
+      <img
+        src="https://github.com/identicons/placeholder.png"
+        alt="Profile"
+        class="h-30 w-30 rounded-full border border-[#d0d7de] object-cover"
+      />
+    </div>
+
+    <!-- Name -->
+    <div>
+      <h1 class="text-3xl font-semibold">Ankita Barman</h1>
+
+      <p class="mt-1 text-xl text-[#59636e]">annkitabarman · she/her</p>
+    </div>
+  </div>
+
+  <!-- Bio -->
+  <p class="mt-4 text-lg leading-8">
+    Frontend Developer Angular, React.JS, JavaScript, TypeScript, Node.js, HTML, CSS
+  </p>
+
+  <!-- Edit Profile -->
+  <button
+    type="button"
+    class="mt-5 w-full rounded-md border border-[#d0d7de] bg-[#f6f8fa] px-4 py-2 text-base font-semibold text-[#1f2328] hover:bg-[#f3f4f6]"
+  >
+    Edit profile
+  </button>
+
+  <!-- Followers -->
+  <div class="mt-5 flex items-center gap-1 text-sm text-[#57606a]">
+    <lucide-icon [img]="Users" [size]="16"></lucide-icon>
+
+    <span class="font-semibold text-[#1f2328]"> 11 </span>
+
+    followers
+
+    <span class="mx-1">·</span>
+
+    <span class="font-semibold text-[#1f2328]"> 3 </span>
+
+    following
+  </div>
+
+  <!-- Mobile Links -->
+  <div class="mt-5 grid grid-cols-1 gap-3 text-sm">
+    <!-- Company -->
+    <div class="flex items-center gap-3">
+      <lucide-icon [img]="Building2" [size]="17" class="text-[#57606a]"></lucide-icon>
+
+      <span>UptimeAI</span>
+    </div>
+
+    <!-- Location -->
+    <div class="flex items-center gap-3">
+      <lucide-icon [img]="MapPin" [size]="17" class="text-[#57606a]"></lucide-icon>
+
+      <span>Bangalore, India</span>
+    </div>
+
+    <!-- Email -->
+    <a
+      href="mailto:kushwaha.shreeram@gmail.com"
+      class="flex items-center gap-3 hover:text-[#0969da]"
+    >
+      <lucide-icon [img]="Mail" [size]="17" class="text-[#57606a]"></lucide-icon>
+
+      <span class="truncate"> kushwaha.shreeram@gmail.com </span>
+    </a>
+
+    <!-- Website -->
+    <a
+      href="https://shreeramk.com"
+      target="_blank"
+      class="flex items-center gap-3 hover:text-[#0969da]"
+    >
+      <lucide-icon [img]="Link" [size]="17" class="text-[#57606a]"></lucide-icon>
+
+      http://shreeramk.com
+    </a>
+
+    <!-- LinkedIn -->
+    <a href="#" class="flex items-center gap-3 hover:text-[#0969da]">
+      <lucide-icon [img]="Linkedin" [size]="17" class="text-[#57606a]"></lucide-icon>
+
+      in/ankita-barman-0b4211240
+    </a>
+
+    <!-- X -->
+    <a href="#" class="flex items-center gap-3 hover:text-[#0969da]">
+      <span class="w-4 text-[#57606a]"> 𝕏 </span>
+
+      @pom_fret
+    </a>
+  </div>
+</div>
