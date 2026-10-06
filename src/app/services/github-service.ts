@@ -82,7 +82,7 @@ export class GithubService {
     );
   }
 
-  getPopularRepositories(username: string) {
+  getRepositories(username: string) {
     return this.http.get<PopularRepositoriesResponse>(
       `${this.backendUrl}/github/repositories/${username}`,
     );

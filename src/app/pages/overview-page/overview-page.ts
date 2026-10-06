@@ -25,11 +25,11 @@ export class OverviewPage implements OnInit {
   repositoriesLoading = signal(true);
 
   ngOnInit(): void {
-    this.loadPopularRepositories();
+    this.loadRepositories();
   }
 
-  private loadPopularRepositories() {
-    this.githubService.getPopularRepositories(USER_NAME).subscribe({
+  private loadRepositories() {
+    this.githubService.getRepositories(USER_NAME).subscribe({
       next: (response) => {
         this.repositories.set(response.nodes);
         this.repositoriesLoading.set(false);

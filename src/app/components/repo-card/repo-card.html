@@ -3,7 +3,12 @@
 >
   <div class="flex h-6 shrink-0 items-start justify-between gap-3">
     <!-- Repository name -->
-    <a href="#" class="truncate font-semibold text-[#0969da] hover:underline">
+    <a
+      [href]="repository().url"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="truncate font-semibold text-[#0969da] hover:underline"
+    >
       {{ repository().name }}
     </a>
 
