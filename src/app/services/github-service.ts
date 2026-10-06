@@ -76,9 +76,9 @@ export class GithubService {
     );
   }
 
-  getContributionActivity(username: string, year: number) {
+  getContributionActivity(username: string, year: number, month: number) {
     return this.http.get<ContributionActivityResponse>(
-      `${this.backendUrl}/github/contribution-activity/${username}/${year}`,
+      `${this.backendUrl}/github/contribution-activity/${username}/${year}/${month}`,
     );
   }
 

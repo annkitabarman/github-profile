@@ -94,20 +94,67 @@ const CONTRIBUTION_ACTIVITY_QUERY = `
   }
 `;
 
-router.get('/contribution-activity/:username/:year', async (req: Request, res: Response) => {
+router.get('/contribution-activity/:username/:year/:month', async (req: Request, res: Response) => {
   try {
-    const { username, year } = req.params;
+    const { username, year: yearParam, month: monthParam } = req.params;
 
-    const numericYear = Number(year);
+    const year = Number(yearParam);
+    const month = Number(monthParam);
 
-    if (!username || !Number.isInteger(numericYear)) {
+    /**
+     * Validate parameters.
+     */
+    if (!username || !Number.isInteger(year) || !Number.isInteger(month)) {
       return res.status(400).json({
-        message: 'Username and valid year are required',
+        message: 'Username, valid year and valid month are required',
       });
     }
 
-    const from = `${numericYear}-01-01T00:00:00Z`;
-    const to = `${numericYear}-12-31T23:59:59Z`;
+    /**
+     * Validate month.
+     */
+    if (month < 1 || month > 12) {
+      return res.status(400).json({
+        message: 'Month must be between 1 and 12',
+      });
+    }
+
+    /**
+     * Start of selected month.
+     *
+     * Example:
+     * year = 2026
+     * month = 10
+     *
+     * → 2026-10-01T00:00:00Z
+     */
+    const fromDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
+
+    /**
+     * Start of the next month.
+     *
+     * Example:
+     * October 2026
+     *
+     * from = October 1
+     * to   = November 1
+     *
+     * Using an exclusive upper bound is cleaner than
+     * trying to calculate 23:59:59 of the last day.
+     */
+    const toDate = new Date(Date.UTC(year, month, 1, 0, 0, 0));
+
+    const from = fromDate.toISOString();
+    const to = toDate.toISOString();
+
+    console.log(
+      `Fetching GitHub contribution activity: ${username} ${year}-${String(month).padStart(2, '0')}`,
+    );
+
+    console.log(`From: ${from}`);
+    console.log(`To:   ${to}`);
+
+    const startTime = performance.now();
 
     const response = await fetch(GITHUB_GRAPHQL_URL, {
       method: 'POST',
@@ -131,6 +178,10 @@ router.get('/contribution-activity/:username/:year', async (req: Request, res: R
 
     const result = await response.json();
 
+    const elapsed = performance.now() - startTime;
+
+    console.log(`GitHub GraphQL request took ${elapsed.toFixed(0)}ms`);
+
     if (!response.ok || result.errors) {
       console.error('GitHub GraphQL error:', result.errors);
 
@@ -140,14 +191,20 @@ router.get('/contribution-activity/:username/:year', async (req: Request, res: R
       });
     }
 
-    const collection = result.data.user.contributionsCollection;
+    const collection = result.data?.user?.contributionsCollection;
+
+    if (!collection) {
+      return res.status(404).json({
+        message: 'GitHub contribution data not found',
+      });
+    }
 
     return res.json(collection);
   } catch (error) {
     console.error('Contribution activity error:', error);
 
     return res.status(500).json({
-      message: 'Failed to fetch contribution activity',
+      message: 'Failed to fetch GitHub contribution activity',
     });
   }
 });

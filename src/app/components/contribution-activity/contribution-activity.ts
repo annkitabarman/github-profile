@@ -43,6 +43,7 @@ interface MonthRepositoryActivity {
 export class ContributionActivity {
   readonly GitCommitHorizontal = GitCommitHorizontal;
   readonly FolderGit2 = FolderGit2;
+
   private readonly githubService = inject(GithubService);
 
   readonly selectedYear = input.required<number>();
@@ -57,19 +58,17 @@ export class ContributionActivity {
 
   readonly targetMonth = computed(() => {
     const year = this.selectedYear();
-
     const now = new Date();
 
     if (year === now.getFullYear()) {
       return now.getMonth();
     }
 
-    return 11; // December
+    return 11;
   });
 
   readonly targetMonthKey = computed(() => {
     const year = this.selectedYear();
-
     const month = this.targetMonth() + 1;
 
     return `${year}-${String(month).padStart(2, '0')}`;
@@ -83,7 +82,6 @@ export class ContributionActivity {
     }
 
     const selectedYear = this.selectedYear();
-
     const targetMonth = this.targetMonth();
 
     const commits = data.commitContributionsByRepository
@@ -116,24 +114,18 @@ export class ContributionActivity {
       } else {
         repositoryMap.set(key, {
           repository: commit.repository,
-
           commits: commit.commitCount,
         });
       }
     }
 
     const repositories = Array.from(repositoryMap.values()).sort((a, b) => b.commits - a.commits);
+
     return [
       {
         month: this.targetMonthKey(),
-
         repositories,
-
-        totalCommits: repositories.reduce(
-          (total, repository) => total + repository.commits,
-
-          0,
-        ),
+        totalCommits: repositories.reduce((total, repository) => total + repository.commits, 0),
       },
     ];
   });
@@ -146,7 +138,6 @@ export class ContributionActivity {
     }
 
     const selectedYear = this.selectedYear();
-
     const targetMonth = this.targetMonth();
 
     const repositories = data.repositoryContributions.nodes
@@ -164,7 +155,6 @@ export class ContributionActivity {
     return [
       {
         month: this.targetMonthKey(),
-
         repositories,
       },
     ];
@@ -173,25 +163,24 @@ export class ContributionActivity {
   readonly hasActivity = computed(() => {
     return this.commitMonths().length > 0 || this.repositoryMonths().length > 0;
   });
+
   constructor() {
     effect(() => {
       const year = this.selectedYear();
+      const month = this.targetMonth();
 
-      this.loadActivity(year);
+      this.loadActivity(year, month + 1);
     });
   }
 
-  private loadActivity(year: number): void {
+  private loadActivity(year: number, month: number): void {
     this.loading.set(true);
-
     this.error.set(false);
-
     this.showAll.set(false);
 
-    this.githubService.getContributionActivity(USER_NAME, year).subscribe({
+    this.githubService.getContributionActivity(USER_NAME, year, month).subscribe({
       next: (data) => {
         this.activity.set(data);
-
         this.loading.set(false);
       },
 
@@ -199,9 +188,7 @@ export class ContributionActivity {
         console.error('Failed to load contribution activity:', error);
 
         this.activity.set(null);
-
         this.loading.set(false);
-
         this.error.set(true);
       },
     });
