@@ -101,47 +101,20 @@ router.get('/contribution-activity/:username/:year/:month', async (req: Request,
     const year = Number(yearParam);
     const month = Number(monthParam);
 
-    /**
-     * Validate parameters.
-     */
     if (!username || !Number.isInteger(year) || !Number.isInteger(month)) {
       return res.status(400).json({
         message: 'Username, valid year and valid month are required',
       });
     }
 
-    /**
-     * Validate month.
-     */
     if (month < 1 || month > 12) {
       return res.status(400).json({
         message: 'Month must be between 1 and 12',
       });
     }
 
-    /**
-     * Start of selected month.
-     *
-     * Example:
-     * year = 2026
-     * month = 10
-     *
-     * → 2026-10-01T00:00:00Z
-     */
     const fromDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0));
 
-    /**
-     * Start of the next month.
-     *
-     * Example:
-     * October 2026
-     *
-     * from = October 1
-     * to   = November 1
-     *
-     * Using an exclusive upper bound is cleaner than
-     * trying to calculate 23:59:59 of the last day.
-     */
     const toDate = new Date(Date.UTC(year, month, 1, 0, 0, 0));
 
     const from = fromDate.toISOString();
