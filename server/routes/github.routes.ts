@@ -120,13 +120,6 @@ router.get('/contribution-activity/:username/:year/:month', async (req: Request,
     const from = fromDate.toISOString();
     const to = toDate.toISOString();
 
-    console.log(
-      `Fetching GitHub contribution activity: ${username} ${year}-${String(month).padStart(2, '0')}`,
-    );
-
-    console.log(`From: ${from}`);
-    console.log(`To:   ${to}`);
-
     const startTime = performance.now();
 
     const response = await fetch(GITHUB_GRAPHQL_URL, {
@@ -152,8 +145,6 @@ router.get('/contribution-activity/:username/:year/:month', async (req: Request,
     const result = await response.json();
 
     const elapsed = performance.now() - startTime;
-
-    console.log(`GitHub GraphQL request took ${elapsed.toFixed(0)}ms`);
 
     if (!response.ok || result.errors) {
       console.error('GitHub GraphQL error:', result.errors);
