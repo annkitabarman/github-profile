@@ -1,10 +1,21 @@
-import { Component, ElementRef, OnDestroy, effect, input, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  effect,
+  input,
+  signal,
+  viewChild,
+  inject,
+  DestroyRef,
+} from '@angular/core';
 
 import * as echarts from 'echarts';
 
 import { GithubService } from '../../services/github-service';
 import { ContributionCalendar } from '../../models/github.contribution.model';
 import { USER_NAME } from '../../constants/user.constant';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-contribution-heatmap',
@@ -16,11 +27,13 @@ export class ContributionHeatmap implements OnDestroy {
   selectedYear = input.required<number>();
   chartElement = viewChild<ElementRef<HTMLDivElement>>('chart');
   calendar = signal<ContributionCalendar | null>(null);
+  private readonly githubService = inject(GithubService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private chart = signal<echarts.ECharts | null>(null);
 
-  constructor(private githubService: GithubService) {
-    effect((onCleanup) => {
+  constructor() {
+    effect(() => {
       const year = this.selectedYear();
       const chartElement = this.chartElement();
 
@@ -28,25 +41,24 @@ export class ContributionHeatmap implements OnDestroy {
         return;
       }
 
-      const subscription = this.githubService.getContributionsData(USER_NAME, year).subscribe({
-        next: (data) => {
-          this.calendar.set(data);
+      this.githubService
+        .getContributionsData(USER_NAME, year)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (data) => {
+            this.calendar.set(data);
 
-          if (!this.chart()) {
-            this.createChart();
-          } else {
-            this.updateChart();
-          }
-        },
+            if (!this.chart()) {
+              this.createChart();
+            } else {
+              this.updateChart();
+            }
+          },
 
-        error: (error) => {
-          console.error('Failed to fetch contributions:', error);
-        },
-      });
-
-      onCleanup(() => {
-        subscription.unsubscribe();
-      });
+          error: (error) => {
+            console.error('Failed to fetch contributions:', error);
+          },
+        });
     });
   }
 

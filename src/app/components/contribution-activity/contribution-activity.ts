@@ -6,6 +6,7 @@ import {
   inject,
   input,
   signal,
+  DestroyRef,
 } from '@angular/core';
 import { GithubService } from '../../services/github-service';
 import {
@@ -15,6 +16,7 @@ import {
 } from '../../models/contribution-activity.model';
 import { GitCommitHorizontal, FolderGit2, LucideAngularModule } from 'lucide-angular';
 import { USER_NAME } from '../../constants/user.constant';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface RepositoryCommitSummary {
   repository: GithubRepository;
@@ -45,6 +47,7 @@ export class ContributionActivity {
   readonly FolderGit2 = FolderGit2;
 
   private readonly githubService = inject(GithubService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly selectedYear = input.required<number>();
 
@@ -178,20 +181,23 @@ export class ContributionActivity {
     this.error.set(false);
     this.showAll.set(false);
 
-    this.githubService.getContributionActivity(USER_NAME, year, month).subscribe({
-      next: (data) => {
-        this.activity.set(data);
-        this.loading.set(false);
-      },
+    this.githubService
+      .getContributionActivity(USER_NAME, year, month)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.activity.set(data);
+          this.loading.set(false);
+        },
 
-      error: (error) => {
-        console.error('Failed to load contribution activity:', error);
+        error: (error) => {
+          console.error('Failed to load contribution activity:', error);
 
-        this.activity.set(null);
-        this.loading.set(false);
-        this.error.set(true);
-      },
-    });
+          this.activity.set(null);
+          this.loading.set(false);
+          this.error.set(true);
+        },
+      });
   }
 
   toggleShowAll(): void {

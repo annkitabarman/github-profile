@@ -1,4 +1,4 @@
-import { Component, input, computed, inject, signal } from '@angular/core';
+import { Component, input, computed, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import {
   BookMarked,
   BookOpen,
@@ -11,6 +11,7 @@ import {
 } from 'lucide-angular';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -19,8 +20,9 @@ import { filter } from 'rxjs';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header {
+export class Header implements OnInit {
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
   readonly Menu = Menu;
   readonly Search = Search;
   readonly BookOpen = BookOpen;
@@ -68,9 +70,12 @@ export class Header {
     return this.navMenu.find((item) => item.route === currentUrl)?.title ?? 'Overview';
   });
 
-  constructor() {
+  ngOnInit() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((event) => {
         const navigation = event as NavigationEnd;
 
