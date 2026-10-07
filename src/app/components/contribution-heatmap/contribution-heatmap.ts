@@ -25,8 +25,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class ContributionHeatmap implements OnDestroy {
   selectedYear = input.required<number>();
+
   chartElement = viewChild<ElementRef<HTMLDivElement>>('chart');
+
   calendar = signal<ContributionCalendar | null>(null);
+
   private readonly githubService = inject(GithubService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -62,7 +65,15 @@ export class ContributionHeatmap implements OnDestroy {
     });
   }
 
-  private getContributionData(): [string, number][] {
+  private getContributionData(): {
+    value: [string, number];
+    itemStyle: {
+      color: string;
+      borderColor: string;
+      borderWidth: number;
+      borderRadius: number;
+    };
+  }[] {
     const calendar = this.calendar();
 
     if (!calendar) {
@@ -70,7 +81,17 @@ export class ContributionHeatmap implements OnDestroy {
     }
 
     return calendar.weeks.flatMap((week) =>
-      week.contributionDays.map((day): [string, number] => [day.date, day.contributionCount]),
+      week.contributionDays.map((day) => ({
+        value: [day.date, day.contributionCount],
+
+        itemStyle: {
+          color: day.contributionCount === 0 ? '#f2f5f7' : day.color,
+
+          borderColor: '#e6e6e6',
+          borderWidth: 0.5,
+          borderRadius: 3,
+        },
+      })),
     );
   }
 
@@ -118,33 +139,10 @@ export class ContributionHeatmap implements OnDestroy {
       },
 
       visualMap: {
-        type: 'piecewise',
         show: false,
-
-        pieces: [
-          {
-            value: 0,
-            color: '#f0fdf4',
-          },
-          {
-            value: 1,
-            color: '#86efac',
-          },
-          {
-            min: 2,
-            max: 3,
-            color: '#4ade80',
-          },
-          {
-            min: 4,
-            max: 6,
-            color: '#16a34a',
-          },
-          {
-            min: 7,
-            color: '#166534',
-          },
-        ],
+        min: 0,
+        max: 1,
+        dimension: 1,
       },
 
       calendar: {
@@ -188,10 +186,6 @@ export class ContributionHeatmap implements OnDestroy {
           type: 'heatmap',
           coordinateSystem: 'calendar',
           calendarIndex: 0,
-
-          itemStyle: {
-            borderRadius: 3,
-          },
 
           data: this.getContributionData(),
         },
