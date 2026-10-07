@@ -17,6 +17,8 @@ import { GithubService } from '../../services/github-service';
 import { ContributionCalendar } from '../../models/github.contribution.model';
 import { USER_NAME } from '../../constants/user.constant';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { throttleTime } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-contribution-heatmap',
@@ -64,6 +66,18 @@ export class ContributionHeatmap implements OnDestroy {
           },
         });
     });
+
+    fromEvent(window, 'resize')
+      .pipe(
+        throttleTime(100, undefined, {
+          leading: true,
+          trailing: true,
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.chart()?.resize();
+      });
   }
 
   toOrdinalDate(value: string | Date): string {
@@ -205,8 +219,6 @@ export class ContributionHeatmap implements OnDestroy {
         },
       ],
     });
-
-    window.addEventListener('resize', this.handleResize);
   }
 
   private updateChart(): void {
@@ -227,13 +239,7 @@ export class ContributionHeatmap implements OnDestroy {
     });
   }
 
-  private handleResize = (): void => {
-    this.chart()?.resize();
-  };
-
   ngOnDestroy(): void {
-    window.removeEventListener('resize', this.handleResize);
-
     this.chart()?.dispose();
     this.chart.set(null);
   }
