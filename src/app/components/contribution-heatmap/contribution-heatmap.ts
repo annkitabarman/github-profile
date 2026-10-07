@@ -9,6 +9,7 @@ import {
   inject,
   DestroyRef,
 } from '@angular/core';
+import { formatDate } from '@angular/common';
 
 import * as echarts from 'echarts';
 
@@ -63,6 +64,20 @@ export class ContributionHeatmap implements OnDestroy {
           },
         });
     });
+  }
+
+  toOrdinalDate(value: string | Date): string {
+    const day = new Date(value).getDate();
+    const suffix =
+      day % 10 === 1 && day !== 11
+        ? 'st'
+        : day % 10 === 2 && day !== 12
+          ? 'nd'
+          : day % 10 === 3 && day !== 13
+            ? 'rd'
+            : 'th';
+
+    return `${formatDate(value, 'MMMM', 'en-US')} ${day}${suffix}`;
   }
 
   private getContributionData(): {
@@ -130,9 +145,8 @@ export class ContributionHeatmap implements OnDestroy {
           const value = params.value;
 
           return `
-            <div style="font-size: 12px;">
-              <strong>${value[0]}</strong><br/>
-              ${value[1]} contributions
+            <div style="font-size: 0.8rem;">
+              ${value[1]} contributions on ${this.toOrdinalDate(value[0])}
             </div>
           `;
         },
